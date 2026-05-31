@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { createComment, votePost, voteComment, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentReplies } from '@/lib/data';
+import { createComment, votePost, voteComment, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentReplies, blockUser } from '@/lib/data';
 import { useI18n } from '@/lib/i18n-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -70,6 +70,16 @@ function CommentItem({ comment, profile, onUpdate, depth = 0 }: { comment: any; 
           )}
           {profile && (
             <button onClick={() => setReplying(!replying)} className="hover:text-[#5B9CF5]">{t('post.reply')}</button>
+          )}
+
+          {/* Block button - only show for others' comments, not self */}
+          {profile && !isAuthor && (
+            <button onClick={async () => {
+              if (!confirm('屏蔽该用户？你将不再看到对方的帖子和评论。')) return;
+              await blockUser(profile.id, comment.author_id);
+              toast.success('已屏蔽');
+              onUpdate();
+            }} className="hover:text-red-400">屏蔽</button>
           )}
           {isAuthor && (
             <>
@@ -223,6 +233,15 @@ export function PostContent({ postId, initialPost, initialComments, voteCount, c
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           {t('post.save')}
         </button>
+        {profile && !isAuthor && (
+          <button onClick={async () => {
+            if (!confirm('屏蔽该用户？')) return;
+            await blockUser(profile.id, postAuthorId);
+            toast.success('已屏蔽');
+          }} className="flex items-center gap-1.5 hover:text-red-400 transition-colors text-xs">
+            🚫 屏蔽
+          </button>
+        )}
         {isAuthor && (
           <button onClick={async () => {
             if (!confirm('Delete?')) return;
