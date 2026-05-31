@@ -1,5 +1,10 @@
+'use client';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { getMedicalRecord } from '@/lib/data';
 
 const REGION_NAMES: Record<string, string> = {
@@ -14,15 +19,33 @@ const REGION_NAMES: Record<string, string> = {
   hongkong: '香港', macau: '澳门', taiwan: '台湾',
 };
 
-export default async function ExperienceDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const record = await getMedicalRecord(id);
-  if (!record) notFound();
+export default function ExperienceDetailPage() {
+  const { t, i18n } = useTranslation();
+  const params = useParams();
+  const id = params.id as string;
+  const [record, setRecord] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const locale = i18n.language === 'en' ? 'en-US' : 'zh-CN';
+
+  useEffect(() => {
+    getMedicalRecord(id).then((r) => {
+      if (!r) {
+        notFound();
+        return;
+      }
+      setRecord(r);
+      setLoading(false);
+    });
+  }, [id]);
+
+  if (loading || !record) {
+    return <div className="max-w-2xl mx-auto px-4 py-6 text-center text-gray-400">{t('common.loading')}</div>;
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/experience" className="text-[#3D7AD6] font-medium">← 返回</Link>
+        <Link href="/experience" className="text-[#3D7AD6] font-medium">← {t('experience.back')}</Link>
         <h1 className="text-lg font-semibold text-gray-800 flex-1 truncate">{record.title}</h1>
       </div>
 
@@ -49,19 +72,19 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
         {(record.hospital_name || record.department || record.diagnosis || record.medication || record.cost) && (
           <div className="bg-gray-50  p-4 mb-4 grid grid-cols-2 gap-3 text-sm">
             {record.hospital_name && (
-              <div><span className="text-gray-400">医院</span><p className="text-gray-700 font-medium mt-0.5">{record.hospital_name}</p></div>
+              <div><span className="text-gray-400">{t('experience.hospital')}</span><p className="text-gray-700 font-medium mt-0.5">{record.hospital_name}</p></div>
             )}
             {record.department && (
-              <div><span className="text-gray-400">科室</span><p className="text-gray-700 font-medium mt-0.5">{record.department}</p></div>
+              <div><span className="text-gray-400">{t('experience.department')}</span><p className="text-gray-700 font-medium mt-0.5">{record.department}</p></div>
             )}
             {record.diagnosis && (
-              <div><span className="text-gray-400">诊断</span><p className="text-gray-700 font-medium mt-0.5">{record.diagnosis}</p></div>
+              <div><span className="text-gray-400">{t('experience.diagnosis')}</span><p className="text-gray-700 font-medium mt-0.5">{record.diagnosis}</p></div>
             )}
             {record.medication && (
-              <div><span className="text-gray-400">用药</span><p className="text-gray-700 font-medium mt-0.5">{record.medication}</p></div>
+              <div><span className="text-gray-400">{t('experience.medication')}</span><p className="text-gray-700 font-medium mt-0.5">{record.medication}</p></div>
             )}
             {record.cost && (
-              <div><span className="text-gray-400">费用</span><p className="text-gray-700 font-medium mt-0.5">¥{record.cost}</p></div>
+              <div><span className="text-gray-400">{t('experience.cost')}</span><p className="text-gray-700 font-medium mt-0.5">¥{record.cost}</p></div>
             )}
           </div>
         )}
@@ -69,7 +92,7 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
         <div className="flex items-center gap-2 mb-4 text-sm text-gray-500">
           <span>{record.is_anonymous ? '• 匿名' : '👤 ' + (record.author?.anonymous_name || '未知')}</span>
           <span>·</span>
-          <span>{new Date(record.created_at).toLocaleDateString('zh-CN')}</span>
+          <span>{new Date(record.created_at).toLocaleDateString(locale)}</span>
         </div>
 
         <p className="text-base text-gray-800 leading-relaxed whitespace-pre-wrap">{record.content}</p>

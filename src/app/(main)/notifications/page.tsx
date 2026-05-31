@@ -1,10 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { useAuth } from '@/lib/auth-context';
 import { getNotifications, markNotificationsRead } from '@/lib/data';
 
 export default function NotificationsPage() {
+  const { t, i18n } = useTranslation();
   const { profile } = useAuth();
   const [notifs, setNotifs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,10 +23,10 @@ export default function NotificationsPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-8">
-      <Link href="/" className="text-xs text-gray-400 hover:text-gray-600 font-bold mb-6 inline-block">← Back</Link>
-      <h1 className="text-xl font-black text-[#111] mb-6">通知</h1>
+      <Link href="/" className="text-xs text-gray-400 hover:text-gray-600 font-bold mb-6 inline-block">{'← '}{t('notifications.back')}</Link>
+      <h1 className="text-xl font-black text-[#111] mb-6">{t('notifications.title')}</h1>
 
-      {loading ? <p className="text-gray-400 text-center py-10 text-sm">Loading...</p> :
+      {loading ? <p className="text-gray-400 text-center py-10 text-sm">{t('common.loading')}</p> :
        notifs.length > 0 ? notifs.map((n: any) => (
         <Link key={n.id} href={n.link || '#'}
           className={`block border p-4 mb-2 hover:border-gray-400 transition-colors ${n.read_at ? 'border-gray-100' : 'border-[#5B9CF5] bg-[#5B9CF5]/[0.02]'}`}>
@@ -32,10 +35,10 @@ export default function NotificationsPage() {
             {!n.read_at && <span className="w-2 h-2 bg-[#5B9CF5] rounded-full" />}
           </div>
           <p className="text-sm text-gray-600">{n.body_zh}</p>
-          <p className="text-[10px] text-gray-400 mt-2">{new Date(n.created_at).toLocaleDateString('zh-CN')}</p>
+          <p className="text-[10px] text-gray-400 mt-2">{new Date(n.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</p>
         </Link>
       )) : (
-        <p className="text-gray-300 text-center py-16 text-sm">暂无通知</p>
+        <p className="text-gray-300 text-center py-16 text-sm">{t('notifications.noNotifications')}</p>
       )}
     </div>
   );

@@ -189,6 +189,10 @@
     "noReports": "No pending reports",
     "back": "Back"
   },
+  "rules": {
+    "title": "Community Rules",
+    "back": "Back"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",

@@ -1,9 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { useAuth } from '@/lib/auth-context';
 import { joinBoard, leaveBoard, isMember } from '@/lib/data';
 
 export function BoardActions({ boardId }: { boardId: string }) {
+  const { t } = useTranslation();
   const { profile } = useAuth();
   const [joined, setJoined] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -25,7 +28,7 @@ export function BoardActions({ boardId }: { boardId: string }) {
         joined ? 'border-[#5B9CF5] text-[#5B9CF5] bg-[#5B9CF5]/5' : 'border-gray-300 text-gray-500 hover:border-[#5B9CF5]'
       }`}
     >
-      {joined ? 'Joined' : 'Join'}
+      {joined ? t('boards.joined') : t('boards.join')}
     </button>
   );
 }

@@ -1,4 +1,9 @@
+'use client';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { getPosts } from '@/lib/data';
 import { supabase } from '@/lib/supabase';
 import { BoardActions } from '@/components/board-actions';
@@ -8,25 +13,40 @@ const NAMES: Record<string, string> = {
   experience: '就诊经历', life: '生活分享', work: '学习工作', support: '情绪支持',
 };
 
-export default async function BoardPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const [posts, boardData] = await Promise.all([
-    getPosts({ boardSlug: slug }),
-    supabase.from('boards').select('id').eq('slug', slug).single(),
-  ]);
+export default function BoardPage() {
+  const { t, i18n } = useTranslation();
+  const params = useParams();
+  const slug = params.slug as string;
+  const [posts, setPosts] = useState<any[]>([]);
+  const [boardId, setBoardId] = useState('');
+  const [loading, setLoading] = useState(true);
+  const locale = i18n.language === 'en' ? 'en-US' : 'zh-CN';
+
+  useEffect(() => {
+    Promise.all([
+      getPosts({ boardSlug: slug }),
+      supabase.from('boards').select('id').eq('slug', slug).single(),
+    ]).then(([postsData, boardData]) => {
+      setPosts(postsData);
+      setBoardId(boardData.data?.id || '');
+      setLoading(false);
+    });
+  }, [slug]);
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
-        <Link href="/" className="text-[#3D7AD6] font-medium">← 返回</Link>
+        <Link href="/" className="text-[#3D7AD6] font-medium">← {t('common.back')}</Link>
         <h1 className="text-xl font-bold text-gray-800">{NAMES[slug] || slug}</h1>
-        <BoardActions boardId={boardData.data?.id || ''} />
+        <BoardActions boardId={boardId} />
       </div>
-      {posts.length > 0 ? posts.map((p: any) => (
+      {loading ? (
+        <p className="text-center text-gray-400 py-10">{t('common.loading')}</p>
+      ) : posts.length > 0 ? posts.map((p: any) => (
         <Link key={p.id} href={`/post/${p.id}`} className="block bg-white  p-4 mb-3 border border-gray-100 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs text-gray-400">{p.is_anonymous ? '匿名' : p.author?.anonymous_name}</span>
-            <span className="text-xs text-gray-300 ml-auto">{new Date(p.created_at).toLocaleDateString('zh-CN')}</span>
+            <span className="text-xs text-gray-400">{p.is_anonymous ? t('post.anonymousUser') : p.author?.anonymous_name}</span>
+            <span className="text-xs text-gray-300 ml-auto">{new Date(p.created_at).toLocaleDateString(locale)}</span>
           </div>
           <h3 className="text-base font-semibold text-gray-800 mb-1">{p.title}</h3>
           <p className="text-sm text-gray-500 line-clamp-2">{p.content}</p>
@@ -35,8 +55,8 @@ export default async function BoardPage({ params }: { params: Promise<{ slug: st
       )) : (
         <div className="text-center py-20 text-gray-400">
           <div className="text-4xl mb-4">▴</div>
-          <p>这个板块还没有帖子</p>
-          <Link href="/submit" className="text-[#5B9CF5] mt-2 inline-block">发布第一个帖子 ⟶</Link>
+          <p>{t('common.noData')}</p>
+          <Link href="/submit" className="text-[#5B9CF5] mt-2 inline-block">{t('post.submit')} ⟶</Link>
         </div>
       )}
     </div>

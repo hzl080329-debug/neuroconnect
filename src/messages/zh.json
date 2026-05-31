@@ -189,6 +189,10 @@
     "noReports": "暂无待处理举报",
     "back": "返回"
   },
+  "rules": {
+    "title": "社区规则",
+    "back": "返回"
+  },
   "common": {
     "save": "保存",
     "cancel": "取消",

@@ -10,10 +10,13 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 
 const COLORS = ['#5B9CF5', '#7AB8F5', '#4ADE80', '#F59E0B', '#EC4899', '#5B9CF5', '#F97316'];
 
 export default function SubmitPage() {
+  const { t, i18n } = useTranslation();
   const fileRef = useRef<HTMLInputElement>(null);
   const { profile } = useAuth();
   const router = useRouter();
@@ -61,15 +64,15 @@ export default function SubmitPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
-        <button onClick={() => router.back()} className="text-[#3D7AD6] font-medium">取消</button>
-        <h1 className="text-lg font-semibold text-gray-800">发布帖子</h1>
+        <button onClick={() => router.back()} className="text-[#3D7AD6] font-medium">{t('common.cancel')}</button>
+        <h1 className="text-lg font-semibold text-gray-800">{t('post.submit')}</h1>
         <Button onClick={handleSubmit} disabled={!boardId || !title || !content || loading}
           className="rounded-full" style={{ backgroundColor: '#5B9CF5' }}>
-          {loading ? '发布中...' : '发布'}
+          {loading ? t('common.loading') : t('post.publish')}
         </Button>
       </div>
 
-      <label className="text-sm font-medium text-gray-600 mb-2 block">选择板块</label>
+      <label className="text-sm font-medium text-gray-600 mb-2 block">{t('post.board')}</label>
       <div className="flex flex-wrap gap-2 mb-5">
         {boards.map((b: any, i: number) => (
           <button key={b.id} onClick={() => setBoardId(b.id)}
@@ -83,10 +86,10 @@ export default function SubmitPage() {
         ))}
       </div>
 
-      <label className="text-sm font-medium text-gray-600 mb-2 block">标题</label>
+      <label className="text-sm font-medium text-gray-600 mb-2 block">{t('post.title')}</label>
       <Input placeholder="起一个标题..." value={title} onChange={e => setTitle(e.target.value)} maxLength={100} className="mb-4" />
 
-      <label className="text-sm font-medium text-gray-600 mb-2 block">正文</label>
+      <label className="text-sm font-medium text-gray-600 mb-2 block">{t('post.content')}</label>
       <Textarea placeholder="分享你想说的..." value={content} onChange={e => setContent(e.target.value)} rows={8} className="mb-4" />
 
       <label className="text-sm font-medium text-gray-600 mb-2 block">图片（可选）</label>
@@ -107,7 +110,7 @@ export default function SubmitPage() {
       <Input placeholder="例如：ADHD, 就诊经历" value={tags} onChange={e => setTags(e.target.value)} className="mb-5" />
 
       <div className="flex items-center justify-between bg-white  px-4 py-3 border">
-        <div><span className="font-medium text-gray-800">匿名发布</span><p className="text-sm text-gray-400">开启后以匿名身份发布</p></div>
+        <div><span className="font-medium text-gray-800">{t('post.anonymous')}</span><p className="text-sm text-gray-400">开启后以匿名身份发布</p></div>
         <Switch checked={isAnonymous} onCheckedChange={setIsAnonymous} />
       </div>
     </div>

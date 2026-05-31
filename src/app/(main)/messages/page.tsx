@@ -1,10 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { useAuth } from '@/lib/auth-context';
 import { getConversations } from '@/lib/data';
 
 export default function MessagesPage() {
+  const { t } = useTranslation();
   const { profile } = useAuth();
   const [conversations, setConversations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +21,7 @@ export default function MessagesPage() {
     return (
       <div className="max-w-md mx-auto px-6 py-20 text-center">
         <div className="text-5xl mb-6">⟶</div>
-        <h1 className="text-xl font-bold text-gray-800 mb-2">私信</h1>
+        <h1 className="text-xl font-bold text-gray-800 mb-2">{t('messages.title')}</h1>
         <p className="text-gray-500 mb-8">登录后查看和发送私信</p>
         <Link href="/auth/login" className="inline-block bg-[#5B9CF5] text-white  px-8 py-4 font-semibold">登录</Link>
       </div>
@@ -27,10 +30,10 @@ export default function MessagesPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
-      <Link href="/" className="text-[#3D7AD6] text-sm mb-4 inline-block">← 返回</Link>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">私信</h1>
+      <Link href="/" className="text-[#3D7AD6] text-sm mb-4 inline-block">{'← '}{t('messages.back')}</Link>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">{t('messages.title')}</h1>
       {loading ? (
-        <p className="text-center text-gray-400 py-10">加载中...</p>
+        <p className="text-center text-gray-400 py-10">{t('common.loading')}</p>
       ) : conversations.length > 0 ? (
         conversations.map((c: any) => (
           <Link key={c.userId} href={`/messages/${c.userId}`}
@@ -48,7 +51,7 @@ export default function MessagesPage() {
       ) : (
         <div className="text-center py-16">
           <div className="text-5xl mb-4">◦</div>
-          <p className="text-gray-500">暂无私信</p>
+          <p className="text-gray-500">{t('messages.noMessages')}</p>
           <p className="text-gray-400 text-sm mt-2">与其他社区成员交流后，私信会显示在这里</p>
         </div>
       )}

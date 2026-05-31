@@ -1,4 +1,9 @@
+'use client';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { getMedicalRecords, getRegionCounts } from '@/lib/data';
 import { ChinaMapWrapper } from '@/components/china-map-wrapper';
 
@@ -14,21 +19,34 @@ const REGION_NAMES: Record<string, string> = {
   hongkong: '香港', macau: '澳门', taiwan: '台湾',
 };
 
-export default async function ExperiencePage({ searchParams }: {
-  searchParams: Promise<{ region?: string }>
-}) {
-  const { region } = await searchParams;
-  const [records, regionCounts] = await Promise.all([
-    getMedicalRecords(region),
-    getRegionCounts(),
-  ]);
+export default function ExperiencePage() {
+  const { t, i18n } = useTranslation();
+  const searchParams = useSearchParams();
+  const region = searchParams.get('region');
+
+  const [records, setRecords] = useState<any[]>([]);
+  const [regionCounts, setRegionCounts] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      getMedicalRecords(region || undefined),
+      getRegionCounts(),
+    ]).then(([recs, counts]) => {
+      setRecords(recs);
+      setRegionCounts(counts);
+      setLoading(false);
+    });
+  }, [region]);
+
   const total = Object.values(regionCounts).reduce((a, b) => a + b, 0);
+  const locale = i18n.language === 'en' ? 'en-US' : 'zh-CN';
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       <div className="flex items-center gap-3 mb-4">
         <Link href="/" className="text-[#3D7AD6] font-medium">←</Link>
-        <h1 className="text-2xl font-bold text-gray-800">就诊地图</h1>
+        <h1 className="text-2xl font-bold text-gray-800">{t('experience.title')}</h1>
         {region && region !== 'all' && (
           <span className="bg-[#5B9CF5]/10 text-[#3D7AD6] rounded-full px-3 py-1 text-sm font-medium">
             📍 {REGION_NAMES[region] || region}
@@ -50,7 +68,9 @@ export default async function ExperiencePage({ searchParams }: {
           <span className="text-sm text-gray-400">共 {records.length} 篇</span>
         </div>
 
-        {records.length > 0 ? (
+        {loading ? (
+          <p className="text-center text-gray-400 py-10">{t('common.loading')}</p>
+        ) : records.length > 0 ? (
           <>
             {records.map((r: any) => (
               <Link key={r.id} href={`/experience/${r.id}`}
@@ -71,7 +91,7 @@ export default async function ExperiencePage({ searchParams }: {
                 <div className="flex items-center gap-2 mt-2 text-xs text-gray-400">
                   <span>{r.is_anonymous ? '• 匿名' : '👤 ' + (r.author?.anonymous_name || '')}</span>
                   <span>·</span>
-                  <span>{new Date(r.created_at).toLocaleDateString('zh-CN')}</span>
+                  <span>{new Date(r.created_at).toLocaleDateString(locale)}</span>
                   {r.diagnosis && <><span>·</span><span>{r.diagnosis}</span></>}
                 </div>
               </Link>
@@ -85,7 +105,7 @@ export default async function ExperiencePage({ searchParams }: {
             </p>
             <p className="text-gray-400 text-sm mb-6">成为第一个分享的人吧</p>
             <Link href="/experience/submit" className="inline-block bg-[#5B9CF5] text-white rounded-full px-6 py-3 font-semibold">
-              分享我的就诊经历
+              {t('experience.share')}
             </Link>
           </div>
         )}

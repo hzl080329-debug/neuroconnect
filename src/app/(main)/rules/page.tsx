@@ -1,4 +1,7 @@
+'use client';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 
 const RULES = [
   { title: '尊重与包容', content: '请尊重每个人的经历和感受，不评判、不攻击、不歧视。' },
@@ -10,11 +13,13 @@ const RULES = [
 ];
 
 export default function RulesPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       <div className="flex items-center gap-4 mb-6">
-        <Link href="/" className="text-[#3D7AD6] font-medium">← 返回</Link>
-        <h1 className="text-xl font-bold text-gray-800">社区规则</h1>
+        <Link href="/" className="text-[#3D7AD6] font-medium">← {t('common.back')}</Link>
+        <h1 className="text-xl font-bold text-gray-800">{t('rules.title')}</h1>
       </div>
       {RULES.map((r, i) => (
         <div key={i} className="bg-white  p-5 mb-4 border shadow-sm">

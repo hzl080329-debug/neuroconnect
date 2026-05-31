@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { useAuth } from '@/lib/auth-context';
 import { getQAQuestions, createQAQuestion, getQAAnswers, createQAAnswer } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -10,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 
 export default function QAPage() {
+  const { t, i18n } = useTranslation();
   const { profile } = useAuth();
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,15 +35,15 @@ export default function QAPage() {
   };
 
   const handleAsk = async () => {
-    if (!profile) { toast.error('请先登录'); return; }
-    if (!title.trim() || !content.trim()) { toast.error('请填写完整'); return; }
+    if (!profile) { toast.error(t('auth.loginError')); return; }
+    if (!title.trim() || !content.trim()) { toast.error(t('common.error')); return; }
     setSubmitting(true);
     const q = await createQAQuestion(profile.id, title.trim(), content.trim(), isAnonymous);
     if (q) {
-      toast.success('问题已发布');
+      toast.success(t('common.save'));
       setShowAsk(false); setTitle(''); setContent('');
       loadQuestions();
-    } else toast.error('发布失败');
+    } else toast.error(t('common.error'));
     setSubmitting(false);
   };
 
@@ -50,11 +53,11 @@ export default function QAPage() {
   };
 
   const handleAnswer = async (qid: string) => {
-    if (!profile) { toast.error('请先登录'); return; }
+    if (!profile) { toast.error(t('auth.loginError')); return; }
     if (!answerText.trim()) return;
     const a = await createQAAnswer(qid, profile.id, answerText.trim(), isAnonymous);
     if (a) {
-      toast.success('回答已发布');
+      toast.success(t('common.save'));
       setAnswerText('');
       loadAnswers(qid);
     }
@@ -64,37 +67,37 @@ export default function QAPage() {
     <div className="max-w-2xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <Link href="/" className="text-[#3D7AD6] text-sm mb-1 inline-block">← 返回</Link>
-          <h1 className="text-2xl font-bold text-gray-800">匿名问答区</h1>
+          <Link href="/" className="text-[#3D7AD6] text-sm mb-1 inline-block">← {t('qa.back')}</Link>
+          <h1 className="text-2xl font-bold text-gray-800">{t('qa.title')}</h1>
         </div>
         <Button onClick={() => setShowAsk(!showAsk)} className="rounded-full" style={{ backgroundColor: '#5B9CF5' }}>
-          {showAsk ? '取消' : '提问'}
+          {showAsk ? t('common.cancel') : t('qa.ask')}
         </Button>
       </div>
 
       {/* Ask form */}
       {showAsk && (
         <div className="bg-white  p-5 border shadow-sm mb-6">
-          <h3 className="font-semibold text-gray-800 mb-4">匿名提问</h3>
-          <Input placeholder="以问号结尾会更容易获得回答" value={title} onChange={e => setTitle(e.target.value)}
+          <h3 className="font-semibold text-gray-800 mb-4">{t('qa.ask')}</h3>
+          <Input placeholder={t('qa.ask')} value={title} onChange={e => setTitle(e.target.value)}
             maxLength={200} className="mb-3" />
-          <Textarea placeholder="详细描述你的问题..." value={content} onChange={e => setContent(e.target.value)}
+          <Textarea placeholder={t('qa.ask')} value={content} onChange={e => setContent(e.target.value)}
             rows={4} className="mb-3" />
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Switch checked={isAnonymous} onCheckedChange={setIsAnonymous} />
-              <span className="text-sm text-gray-500">匿名提问</span>
+              <span className="text-sm text-gray-500">{t('post.anonymous')}</span>
             </div>
           </div>
           <Button onClick={handleAsk} disabled={submitting} className="w-full " style={{ backgroundColor: '#5B9CF5' }}>
-            {submitting ? '发布中...' : '发布问题'}
+            {submitting ? t('common.loading') : t('post.publish')}
           </Button>
         </div>
       )}
 
       {/* Questions list */}
       {loading ? (
-        <p className="text-gray-400 text-center py-10">加载中...</p>
+        <p className="text-gray-400 text-center py-10">{t('common.loading')}</p>
       ) : questions.length > 0 ? (
         questions.map((q: any) => (
           <div key={q.id} className="bg-white  border shadow-sm mb-3 overflow-hidden">
@@ -103,14 +106,14 @@ export default function QAPage() {
               className="w-full text-left p-4 hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">问答</span>
-                <span className="text-xs text-gray-400">{q.is_anonymous ? '匿名' : q.author?.anonymous_name}</span>
+                <span className="text-xs text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">{t('qa.title')}</span>
+                <span className="text-xs text-gray-400">{q.is_anonymous ? t('post.anonymousUser') : q.author?.anonymous_name}</span>
               </div>
               <h3 className="font-semibold text-gray-800">{q.title}</h3>
               <p className="text-sm text-gray-500 mt-1 line-clamp-2">{q.content}</p>
               <div className="flex gap-4 mt-2 text-xs text-gray-400">
-                <span>{q.answer_count || 0} 个回答</span>
-                <span>{new Date(q.created_at).toLocaleDateString('zh-CN')}</span>
+                <span>{q.answer_count || 0} {t('qa.answer')}</span>
+                <span>{new Date(q.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</span>
               </div>
             </button>
 
@@ -121,23 +124,23 @@ export default function QAPage() {
                   answers.map((a: any) => (
                     <div key={a.id} className="mb-3 pb-3 border-b border-gray-100 last:border-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs text-gray-500 font-medium">{a.is_anonymous ? '匿名' : a.author?.anonymous_name}</span>
+                        <span className="text-xs text-gray-500 font-medium">{a.is_anonymous ? t('post.anonymousUser') : a.author?.anonymous_name}</span>
                       </div>
                       <p className="text-sm text-gray-800">{a.content}</p>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-400 py-2">暂无回答</p>
+                  <p className="text-sm text-gray-400 py-2">{t('qa.noAnswers')}</p>
                 )}
 
                 {/* Answer input */}
                 <div className="flex gap-2 mt-3">
-                  <Input placeholder="写下你的回答..." value={answerText}
+                  <Input placeholder={t('qa.answer')} value={answerText}
                     onChange={e => setAnswerText(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleAnswer(q.id)}
                     className="flex-1 text-sm rounded-full" />
                   <Button size="sm" onClick={() => handleAnswer(q.id)} className="rounded-full"
-                    style={{ backgroundColor: '#5B9CF5' }}>回答</Button>
+                    style={{ backgroundColor: '#5B9CF5' }}>{t('qa.answer')}</Button>
                 </div>
               </div>
             )}
@@ -146,8 +149,8 @@ export default function QAPage() {
       ) : (
         <div className="text-center py-16">
           <div className="text-5xl mb-4">◦</div>
-          <p className="text-gray-500">还没有人提问</p>
-          <p className="text-gray-400 text-sm mt-2">点击右上角「提问」发布第一个问题</p>
+          <p className="text-gray-500">{t('qa.noAnswers')}</p>
+          <p className="text-gray-400 text-sm mt-2">{t('qa.ask')}</p>
         </div>
       )}
     </div>

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 
 const AVATARS = [
   '•','🐱','🐻','🐰','🐼','🦉','🐨','🐸','🦋','🐙','🦄','🐶',
@@ -15,6 +17,7 @@ const AVATARS = [
 ];
 
 export default function RegisterPage() {
+  const { t, i18n } = useTranslation();
   const { signUp } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -25,7 +28,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!email || !password) { setError('请填写邮箱和密码'); return; }
+    if (!email || !password) { setError(t('auth.loginError')); return; }
     if (password.length < 6) { setError('密码至少6个字符'); return; }
     if (!name.trim()) { setError('请设置匿名昵称'); return; }
     setLoading(true); setError('');
@@ -53,22 +56,22 @@ export default function RegisterPage() {
         ))}
       </div>
 
-      <label className="text-sm font-medium text-gray-700 mb-2 block">匿名昵称</label>
+      <label className="text-sm font-medium text-gray-700 mb-2 block">{t('auth.nickname')}</label>
       <Input placeholder="起一个喜欢的昵称" value={name} onChange={e => setName(e.target.value)} maxLength={20} className="mb-2" />
       <p className="text-xs text-gray-400 mb-4 ml-1">社区中展示的名称（2-20字符）</p>
 
-      <label className="text-sm font-medium text-gray-700 mb-2 block">邮箱</label>
+      <label className="text-sm font-medium text-gray-700 mb-2 block">{t('auth.email')}</label>
       <Input type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} className="mb-2" />
       <p className="text-xs text-gray-400 mb-4 ml-1">仅用于登录，不公开</p>
 
-      <label className="text-sm font-medium text-gray-700 mb-2 block">密码</label>
+      <label className="text-sm font-medium text-gray-700 mb-2 block">{t('auth.password')}</label>
       <Input type="password" placeholder="至少6个字符" value={password} onChange={e => setPassword(e.target.value)} className="mb-8" />
 
       <Button onClick={handleRegister} disabled={loading} className="w-full  py-6 mb-4" style={{ backgroundColor: '#5B9CF5' }}>
-        {loading ? '注册中...' : '注册'}
+        {loading ? t('common.loading') : t('auth.register')}
       </Button>
       <p className="text-center text-gray-500">
-        已有账号？<Link href="/auth/login" className="text-[#3D7AD6] font-semibold ml-1">登录</Link>
+        {t('auth.hasAccount')}<Link href="/auth/login" className="text-[#3D7AD6] font-semibold ml-1">{t('auth.goLogin')}</Link>
       </p>
     </div>
   );

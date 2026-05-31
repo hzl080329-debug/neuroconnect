@@ -1,10 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 
 export default function SavedPage() {
+  const { t, i18n } = useTranslation();
   const { profile } = useAuth();
   const [tab, setTab] = useState<'saved' | 'voted'>('saved');
   const [posts, setPosts] = useState<any[]>([]);
@@ -34,19 +37,19 @@ export default function SavedPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-8">
-      <Link href="/" className="text-xs text-gray-400 font-bold mb-6 inline-block">← Back</Link>
-      <h1 className="text-xl font-black text-[#111] mb-6">收藏与点赞</h1>
+      <Link href="/" className="text-xs text-gray-400 font-bold mb-6 inline-block">{'← '}{t('common.back')}</Link>
+      <h1 className="text-xl font-black text-[#111] mb-6">{t('profile.saved')} & {t('profile.liked')}</h1>
 
       <div className="flex gap-1 mb-6 border-b border-gray-200">
         {[
-          { key: 'saved' as const, label: '收藏' },
-          { key: 'voted' as const, label: '赞过' },
-        ].map(t => (
-          <button key={t.key} onClick={() => setTab(t.key)}
+          { key: 'saved' as const, label: t('profile.saved') },
+          { key: 'voted' as const, label: t('profile.liked') },
+        ].map(tabItem => (
+          <button key={tabItem.key} onClick={() => setTab(tabItem.key)}
             className={`px-4 py-2 text-xs font-bold uppercase tracking-wider border-b-2 transition-colors ${
-              tab === t.key ? 'border-[#5B9CF5] text-[#5B9CF5]' : 'border-transparent text-gray-400 hover:text-gray-600'
+              tab === tabItem.key ? 'border-[#5B9CF5] text-[#5B9CF5]' : 'border-transparent text-gray-400 hover:text-gray-600'
             }`}>
-            {t.label}
+            {tabItem.label}
           </button>
         ))}
       </div>
@@ -54,7 +57,7 @@ export default function SavedPage() {
       {!profile ? (
         <p className="text-gray-400 text-center py-16 text-sm">请先登录</p>
       ) : loading ? (
-        <p className="text-gray-400 text-center py-10 text-sm">Loading...</p>
+        <p className="text-gray-400 text-center py-10 text-sm">{t('common.loading')}</p>
       ) : posts.length > 0 ? (
         posts.map((p: any) => (
           <Link key={p.id} href={`/post/${p.id}`} className="block border border-gray-100 p-4 mb-2 hover:border-gray-300 transition-colors">
@@ -62,7 +65,7 @@ export default function SavedPage() {
               <span className="font-bold text-[#5B9CF5]">{p.board?.name_zh}</span>
               <span className="text-gray-300">|</span>
               <span className="text-gray-400">{p.is_anonymous ? '匿名' : p.author?.anonymous_name}</span>
-              <span className="ml-auto text-gray-300">{new Date(p.created_at).toLocaleDateString('zh-CN')}</span>
+              <span className="ml-auto text-gray-300">{new Date(p.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</span>
             </div>
             <h3 className="text-sm font-bold text-[#111] mb-1">{p.title}</h3>
             <p className="text-xs text-gray-500 line-clamp-2">{p.content}</p>
@@ -74,7 +77,7 @@ export default function SavedPage() {
         ))
       ) : (
         <p className="text-gray-300 text-center py-16 text-sm uppercase">
-          {tab === 'saved' ? '还没有收藏的帖子' : '还没有赞过的帖子'}
+          {t('common.noData')}
         </p>
       )}
     </div>

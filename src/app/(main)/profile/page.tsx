@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { useAuth } from '@/lib/auth-context';
 import { getUserPosts, updateProfile } from '@/lib/data';
 import { supabase } from '@/lib/supabase';
@@ -12,6 +14,7 @@ import { toast } from 'sonner';
 const AVATARS = ['◈','•','○','▴','▾','★','♦','□','●','◦','◉','⊕'];
 
 export default function ProfilePage() {
+  const { t, i18n } = useTranslation();
   const { user, profile, loading, signOut, refreshProfile } = useAuth();
   const [posts, setPosts] = useState<any[]>([]);
   const [savedPosts, setSavedPosts] = useState<any[]>([]);
@@ -62,7 +65,7 @@ export default function ProfilePage() {
     setSaving(false);
   };
 
-  if (loading) return <div className="text-center py-20 text-gray-400 text-sm">加载中...</div>;
+  if (loading) return <div className="text-center py-20 text-gray-400 text-sm">{t('common.loading')}</div>;
 
   if (!user || !profile) {
     return (
@@ -77,11 +80,11 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-8">
-      <Link href="/" className="text-xs text-gray-400 hover:text-gray-600 font-bold mb-6 inline-block">← 返回</Link>
+      <Link href="/" className="text-xs text-gray-400 hover:text-gray-600 font-bold mb-6 inline-block">{'← '}{t('common.back')}</Link>
 
       {editing ? (
         <div className="border border-gray-200 p-6 mb-6">
-          <h2 className="text-sm font-bold text-[#111] mb-6">编辑资料</h2>
+          <h2 className="text-sm font-bold text-[#111] mb-6">{t('profile.edit')}</h2>
 
           {profile.is_premium && (
             <div className="mb-4">
@@ -102,17 +105,17 @@ export default function ProfilePage() {
             ))}
           </div>
 
-          <label className="text-xs font-bold text-gray-400 mb-2 block">昵称</label>
+          <label className="text-xs font-bold text-gray-400 mb-2 block">{t('profile.nickname')}</label>
           <Input value={editName} onChange={e => setEditName(e.target.value)} maxLength={20} className="mb-4 border-gray-300" />
 
-          <label className="text-xs font-bold text-gray-400 mb-2 block">简介</label>
+          <label className="text-xs font-bold text-gray-400 mb-2 block">{t('profile.bio')}</label>
           <Textarea value={editBio} onChange={e => setEditBio(e.target.value)} maxLength={200} rows={3} className="mb-6 border-gray-300" />
 
           <div className="flex gap-3">
             <Button onClick={handleSave} disabled={saving} className="flex-1 bg-[#5B9CF5] text-white text-xs font-bold">
-              {saving ? '保存中...' : '保存'}
+              {saving ? '保存中...' : t('profile.save')}
             </Button>
-            <Button onClick={() => setEditing(false)} variant="outline" className="flex-1 border-gray-300 text-xs font-bold">取消</Button>
+            <Button onClick={() => setEditing(false)} variant="outline" className="flex-1 border-gray-300 text-xs font-bold">{t('common.cancel')}</Button>
           </div>
         </div>
       ) : (
@@ -125,19 +128,19 @@ export default function ProfilePage() {
               {profile.anonymous_name}
               {profile.is_premium && <span className="text-[#5B9CF5] text-xs">♦</span>}
             </h1>
-            <p className="text-sm text-gray-400 mt-1">{profile.karma || 0} 积分</p>
+            <p className="text-sm text-gray-400 mt-1">{profile.karma || 0} {t('profile.karma')}</p>
             {profile.bio && <p className="text-xs text-gray-500 mt-3">{profile.bio}</p>}
-            <p className="text-xs text-gray-400 mt-3">加入于 {new Date(profile.created_at).toLocaleDateString('zh-CN')}</p>
+            <p className="text-xs text-gray-400 mt-3">{t('profile.joined')} {new Date(profile.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</p>
             <Button onClick={() => setEditing(true)} variant="outline" className="mt-4 border-gray-300 text-xs font-bold">
-              编辑资料
+              {t('profile.edit')}
             </Button>
           </div>
 
           <div className="grid grid-cols-4 gap-3 mb-6">
             {[
-              { key: 'posts' as const, label: '帖子', count: posts.length },
-              { key: 'saved' as const, label: '收藏', count: savedPosts.length },
-              { key: 'voted' as const, label: '赞过', count: votedPosts.length },
+              { key: 'posts' as const, label: t('profile.posts'), count: posts.length },
+              { key: 'saved' as const, label: t('profile.saved'), count: savedPosts.length },
+              { key: 'voted' as const, label: t('profile.liked'), count: votedPosts.length },
             ].map(t => (
               <button key={t.key} onClick={() => setTab(t.key)}
                 className={`border p-3 text-center transition-colors ${tab === t.key ? 'border-[#5B9CF5] bg-[#5B9CF5]/5' : 'border-gray-200 hover:border-gray-300'}`}>
@@ -146,17 +149,17 @@ export default function ProfilePage() {
               </button>
             ))}
             <Link href="/messages" className="border border-gray-200 p-3 text-center block hover:border-gray-300">
-              <div className="text-xl font-black text-[#111]">⟶</div><div className="text-xs text-gray-400 mt-1">私信</div>
+              <div className="text-xl font-black text-[#111]">⟶</div><div className="text-xs text-gray-400 mt-1">{t('messages.title')}</div>
             </Link>
           </div>
 
-          {tab === 'posts' && (posts.length > 0 ? posts.map((p: any) => <PostLink key={p.id} p={p} />) : <p className="text-xs text-gray-300 py-6 text-center">暂无帖子</p>)}
-          {tab === 'saved' && (savedPosts.length > 0 ? savedPosts.map((p: any) => <PostLink key={p.id} p={p} />) : <p className="text-xs text-gray-300 py-6 text-center">暂无收藏</p>)}
-          {tab === 'voted' && (votedPosts.length > 0 ? votedPosts.map((p: any) => <PostLink key={p.id} p={p} />) : <p className="text-xs text-gray-300 py-6 text-center">暂无赞过</p>)}
+          {tab === 'posts' && (posts.length > 0 ? posts.map((p: any) => <PostLink key={p.id} p={p} />) : <p className="text-xs text-gray-300 py-6 text-center">{t('common.noData')}</p>)}
+          {tab === 'saved' && (savedPosts.length > 0 ? savedPosts.map((p: any) => <PostLink key={p.id} p={p} />) : <p className="text-xs text-gray-300 py-6 text-center">{t('common.noData')}</p>)}
+          {tab === 'voted' && (votedPosts.length > 0 ? votedPosts.map((p: any) => <PostLink key={p.id} p={p} />) : <p className="text-xs text-gray-300 py-6 text-center">{t('common.noData')}</p>)}
 
           <div className="mt-6 space-y-2">
             <Link href="/rules" className="block border border-gray-200 p-3 text-xs font-bold text-gray-600 hover:border-gray-400">社区规则</Link>
-            <button onClick={() => signOut()} className="block w-full text-left border border-gray-200 p-3 text-xs font-bold text-gray-400 hover:text-red-500 hover:border-red-300">退出登录</button>
+            <button onClick={() => signOut()} className="block w-full text-left border border-gray-200 p-3 text-xs font-bold text-gray-400 hover:text-red-500 hover:border-red-300">{t('profile.logout')}</button>
           </div>
         </>
       )}

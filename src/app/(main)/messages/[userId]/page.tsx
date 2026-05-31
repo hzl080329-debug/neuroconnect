@@ -1,12 +1,15 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { useAuth } from '@/lib/auth-context';
 import { getMessages, sendMessage as sendMsg } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 export default function ChatPage() {
+  const { t, i18n } = useTranslation();
   const { userId } = useParams<{ userId: string }>();
   const { profile } = useAuth();
   const router = useRouter();
@@ -43,7 +46,7 @@ export default function ChatPage() {
     <div className="max-w-2xl mx-auto flex flex-col h-screen">
       {/* Header */}
       <div className="flex items-center gap-4 px-4 py-3 border-b bg-white">
-        <button onClick={() => router.back()} className="text-[#3D7AD6] font-medium">← 返回</button>
+        <button onClick={() => router.back()} className="text-[#3D7AD6] font-medium">{'← '}{t('messages.back')}</button>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm">•</div>
           <span className="font-semibold text-gray-800">私信对话</span>
@@ -53,9 +56,9 @@ export default function ChatPage() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-[#FFFAF5]">
         {loading ? (
-          <p className="text-center text-gray-400 py-10">加载中...</p>
+          <p className="text-center text-gray-400 py-10">{t('common.loading')}</p>
         ) : messages.length === 0 ? (
-          <p className="text-center text-gray-400 py-10">暂无消息，发送第一条吧</p>
+          <p className="text-center text-gray-400 py-10">{t('messages.noMessages')}</p>
         ) : (
           messages.map((m: any) => {
             const isMine = m.sender_id === profile.id;
@@ -66,8 +69,8 @@ export default function ChatPage() {
                 }`}>
                   <p className="text-sm">{m.content}</p>
                   <p className={`text-xs mt-1 ${isMine ? 'text-white/70' : 'text-gray-400'}`}>
-                    {new Date(m.created_at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
-                    {m.read_at && isMine ? ' ✓已读' : ''}
+                    {new Date(m.created_at).toLocaleTimeString(i18n.language === 'en' ? 'en-US' : 'zh-CN', { hour: '2-digit', minute: '2-digit' })}
+                    {m.read_at && isMine ? ` ✓${t('messages.read')}` : ''}
                   </p>
                 </div>
               </div>
@@ -87,7 +90,7 @@ export default function ChatPage() {
           className="flex-1 rounded-full"
         />
         <Button onClick={handleSend} className="rounded-full" style={{ backgroundColor: '#5B9CF5' }}>
-          发送
+          {t('messages.send')}
         </Button>
       </div>
     </div>
