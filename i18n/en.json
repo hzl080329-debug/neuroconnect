@@ -1,0 +1,93 @@
+{
+  "app": {
+    "name": "Neurodiversity Community",
+    "subtitle": "Neurodiversity Support Community"
+  },
+  "tabs": {
+    "home": "Home",
+    "boards": "Boards",
+    "qa": "Q&A",
+    "resources": "Resources",
+    "profile": "Profile"
+  },
+  "home": {
+    "searchPlaceholder": "Search posts, topics...",
+    "hotPosts": "Hot Posts",
+    "latestPosts": "Latest",
+    "boards": "Community Boards",
+    "emptyHot": "No posts yet. Be the first to share!",
+    "emptyLatest": "The community is just getting started!"
+  },
+  "boards": {
+    "adhd": "ADHD",
+    "autism": "Autism Spectrum",
+    "anxiety": "Anxiety & Depression",
+    "experience": "Medical Visits",
+    "life": "Life Sharing",
+    "work": "Study & Work",
+    "support": "Emotional Support"
+  },
+  "post": {
+    "submit": "Create Post",
+    "title": "Title",
+    "content": "Content",
+    "selectBoard": "Select Board",
+    "tags": "Tags",
+    "anonymous": "Post Anonymously",
+    "publish": "Publish",
+    "comment": "Comment",
+    "reply": "Reply",
+    "like": "Like",
+    "save": "Save",
+    "report": "Report"
+  },
+  "auth": {
+    "login": "Log In",
+    "register": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "phone": "Phone Number",
+    "anonymousName": "Anonymous Name",
+    "setupProfile": "Set up your anonymous identity"
+  },
+  "qa": {
+    "title": "Anonymous Q&A",
+    "askQuestion": "Ask a Question",
+    "answer": "Answer"
+  },
+  "messages": {
+    "title": "Messages",
+    "noMessages": "No messages yet"
+  },
+  "resources": {
+    "title": "Resources",
+    "articles": "Articles",
+    "guides": "Guides",
+    "hotlines": "Hotlines",
+    "support": "Support"
+  },
+  "profile": {
+    "myPosts": "My Posts",
+    "myComments": "My Comments",
+    "saved": "Saved",
+    "settings": "Settings",
+    "logout": "Log Out"
+  },
+  "rules": {
+    "title": "Community Rules"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "reports": "Report Management",
+    "resources": "Resource Management"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "noData": "No content yet"
+  }
+}

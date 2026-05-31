@@ -1,0 +1,93 @@
+{
+  "app": {
+    "name": "神经多样性互助社区",
+    "subtitle": "Neurodiversity Support Community"
+  },
+  "tabs": {
+    "home": "首页",
+    "boards": "板块",
+    "qa": "问答",
+    "resources": "资源",
+    "profile": "我的"
+  },
+  "home": {
+    "searchPlaceholder": "搜索帖子、话题...",
+    "hotPosts": "热门帖子",
+    "latestPosts": "最新讨论",
+    "boards": "社区板块",
+    "emptyHot": "还没有帖子，成为第一个分享的人吧！",
+    "emptyLatest": "社区刚刚开始，快来发布第一个帖子！"
+  },
+  "boards": {
+    "adhd": "ADHD",
+    "autism": "自闭谱系",
+    "anxiety": "焦虑抑郁",
+    "experience": "就诊经历",
+    "life": "生活分享",
+    "work": "学习工作",
+    "support": "情绪支持"
+  },
+  "post": {
+    "submit": "发布帖子",
+    "title": "标题",
+    "content": "正文",
+    "selectBoard": "选择板块",
+    "tags": "标签",
+    "anonymous": "匿名发布",
+    "publish": "发布",
+    "comment": "评论",
+    "reply": "回复",
+    "like": "点赞",
+    "save": "收藏",
+    "report": "举报"
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "phone": "手机号",
+    "anonymousName": "匿名昵称",
+    "setupProfile": "设置你的匿名身份"
+  },
+  "qa": {
+    "title": "匿名问答区",
+    "askQuestion": "提出问题",
+    "answer": "回答"
+  },
+  "messages": {
+    "title": "私信",
+    "noMessages": "暂无消息"
+  },
+  "resources": {
+    "title": "资源中心",
+    "articles": "科普文章",
+    "guides": "就诊指南",
+    "hotlines": "求助热线",
+    "support": "支持资源"
+  },
+  "profile": {
+    "myPosts": "我的帖子",
+    "myComments": "我的评论",
+    "saved": "收藏",
+    "settings": "设置",
+    "logout": "退出登录"
+  },
+  "rules": {
+    "title": "社区规则"
+  },
+  "admin": {
+    "title": "管理后台",
+    "reports": "举报管理",
+    "resources": "资源管理"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "confirm": "确认",
+    "loading": "加载中...",
+    "error": "出错了",
+    "noData": "暂无内容"
+  }
+}
