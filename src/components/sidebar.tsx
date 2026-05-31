@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useI18n } from '@/lib/i18n-provider';
-import { useDarkMode } from '@/lib/dark-mode-context';
 
 const icons: Record<string, string> = {
   home: '⌂', profile: '○', notifs: '◉', messages: '⟶', map: '◷',
@@ -14,7 +13,6 @@ export function Sidebar() {
   const pathname = usePathname();
   const { user, profile, signOut } = useAuth();
   const { t, lang, changeLang } = useI18n();
-  const { dark, toggle: toggleDark } = useDarkMode();
 
   const links = [
     { href: '/', label: t('nav.home'), key: 'home' },
@@ -56,21 +54,14 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Language + Dark mode toggles */}
-      <div className="px-3 py-2 space-y-0.5">
+      {/* Language toggle */}
+      <div className="px-3 py-2">
         <button
           onClick={() => changeLang(lang === 'zh' ? 'en' : 'zh')}
           className="flex items-center gap-2 px-3 py-2 text-xs uppercase tracking-wider text-gray-500 hover:text-gray-300 hover:bg-[#1a1a1a] w-full transition-colors"
         >
           <span className="text-[10px]">🌐</span>
           {lang === 'zh' ? 'EN' : '中文'}
-        </button>
-        <button
-          onClick={toggleDark}
-          className="flex items-center gap-2 px-3 py-2 text-xs uppercase tracking-wider text-gray-500 hover:text-gray-300 hover:bg-[#1a1a1a] w-full transition-colors"
-        >
-          <span className="text-[10px]">{dark ? '☀' : '☾'}</span>
-          {dark ? 'Light' : 'Dark'}
         </button>
       </div>
 
