@@ -1,9 +1,7 @@
 'use client';
-import { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/lib/theme-context';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 
 const LANGUAGES = [
   { code: 'zh', label: '中文', flag: '🇨🇳' },
@@ -12,14 +10,8 @@ const LANGUAGES = [
 
 export default function SettingsPage() {
   const { bg, setBg, bgOptions } = useTheme();
-  const { i18n, t } = useTranslation();
-  const [lang, setLang] = useState(i18n.language || 'zh');
+  const { t, lang, changeLang } = useI18n();
   const currentBg = bgOptions.find(o => o.bg === bg)?.key || 'warm';
-
-  const switchLang = (code: string) => {
-    i18n.changeLanguage(code);
-    setLang(code);
-  };
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
@@ -33,7 +25,7 @@ export default function SettingsPage() {
           {LANGUAGES.map(l => (
             <button
               key={l.code}
-              onClick={() => switchLang(l.code)}
+              onClick={() => changeLang(l.code)}
               className={`p-4 border-2 text-center transition-all ${
                 lang === l.code
                   ? 'border-[#5B9CF5] bg-[#5B9CF5]/5'

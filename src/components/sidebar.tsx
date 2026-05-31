@@ -2,8 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 
 const icons: Record<string, string> = {
   home: '⌂', profile: '○', notifs: '◉', messages: '⟶', map: '◷',
@@ -13,8 +12,7 @@ const icons: Record<string, string> = {
 export function Sidebar() {
   const pathname = usePathname();
   const { user, profile, signOut } = useAuth();
-  const { t, i18n } = useTranslation();
-  const lang = (i18n as any).resolvedLanguage || i18n.language || 'zh';
+  const { t, lang, changeLang } = useI18n();
 
   const links = [
     { href: '/', label: t('nav.home'), key: 'home' },
@@ -59,7 +57,7 @@ export function Sidebar() {
       {/* Language toggle */}
       <div className="px-3 py-2">
         <button
-          onClick={() => i18n.changeLanguage(lang === 'zh' ? 'en' : 'zh')}
+          onClick={() => changeLang(lang === 'zh' ? 'en' : 'zh')}
           className="flex items-center gap-2 px-3 py-2 text-xs uppercase tracking-wider text-gray-500 hover:text-gray-300 hover:bg-[#1a1a1a] w-full transition-colors"
         >
           <span className="text-[10px]">🌐</span>
