@@ -2,11 +2,15 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { createComment, votePost, toggleSavePost, submitReport, editComment, deleteComment, deletePost, getCommentsSorted } from '@/lib/data';
+import { createComment, votePost, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentsSorted } from '@/lib/data';
 import { useI18n } from '@/lib/i18n-provider';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
 
 function CommentItem({ comment, profile, onUpdate }: { comment: any; profile: any; onUpdate: () => void }) {
-  const { t, lang, changeLang } = useI18n();
+  const { t, lang } = useI18n();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(comment.content);
   const isAuthor = profile && comment.author_id === profile.id;
@@ -37,21 +41,41 @@ function CommentItem({ comment, profile, onUpdate }: { comment: any; profile: an
     </div>
   );
 }
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
 
-export function PostContent({ postId, initialComments, voteCount, commentCount, postAuthorId }: {
-  postId: string; initialComments: any[]; voteCount: number; commentCount: number; postAuthorId: string;
+export function PostContent({ postId, initialPost, initialComments, voteCount, commentCount, postAuthorId }: {
+  postId: string; initialPost: any; initialComments: any[]; voteCount: number; commentCount: number; postAuthorId: string;
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { profile } = useAuth();
+  const router = useRouter();
+
+  // Post editing
+  const [editingPost, setEditingPost] = useState(false);
+  const [editTitle, setEditTitle] = useState(initialPost.title);
+  const [editContent, setEditContent] = useState(initialPost.content);
+  const [postData, setPostData] = useState(initialPost);
+
+  // Comments
   const [comments, setComments] = useState(initialComments);
   const [text, setText] = useState('');
-  const [votes, setVotes] = useState(voteCount);
   const [loading, setLoading] = useState(false);
   const [sortOrder, setSortOrder] = useState<'new' | 'top'>('new');
-  const router = useRouter();
+
+  const [votes, setVotes] = useState(voteCount);
+  const isAuthor = profile && profile.id === postAuthorId;
+
+  const handleSavePost = async () => {
+    if (!profile || !editTitle.trim() || !editContent.trim()) return;
+    const updated = await editPost(postId, profile.id, { title: editTitle.trim(), content: editContent.trim() });
+    if (updated) {
+      setPostData(updated);
+      setEditingPost(false);
+      toast.success('已更新');
+      router.refresh();
+    } else {
+      toast.error('编辑失败');
+    }
+  };
 
   const handleVote = async (value: 1 | -1) => {
     if (!profile) { toast.error('请先登录'); return; }
@@ -74,6 +98,51 @@ export function PostContent({ postId, initialComments, voteCount, commentCount, 
 
   return (
     <div>
+      {/* Post body */}
+      <div className="bg-white p-5 border border-gray-100 shadow-sm mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <span className="bg-[#5B9CF5]/10 text-[#3D7AD6] text-xs font-semibold rounded-full px-3 py-1 inline-block">
+            {lang === 'en' ? (postData.board?.name_en || postData.board?.name_zh) : postData.board?.name_zh}
+          </span>
+          {isAuthor && !editingPost && (
+            <button onClick={() => setEditingPost(true)} className="text-xs text-gray-400 hover:text-[#5B9CF5]">
+              {t('post.edit')}
+            </button>
+          )}
+        </div>
+
+        {editingPost ? (
+          <div className="space-y-3">
+            <Input value={editTitle} onChange={e => setEditTitle(e.target.value)} className="text-lg font-bold" placeholder={t('post.title')} />
+            <Textarea value={editContent} onChange={e => setEditContent(e.target.value)} rows={6} className="text-base" placeholder={t('post.content')} />
+            <div className="flex gap-2">
+              <Button onClick={handleSavePost} className="bg-[#5B9CF5] text-xs">{t('common.save')}</Button>
+              <Button onClick={() => { setEditingPost(false); setEditTitle(postData.title); setEditContent(postData.content); }} variant="outline" className="text-xs">{t('common.cancel')}</Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <h2 className="text-xl font-bold text-gray-800 mb-3">{postData.title}</h2>
+            <div className="flex items-center gap-2 mb-4 text-sm text-gray-500">
+              <span>{postData.is_anonymous ? '• ' + t('post.anonymousUser') : '👤 ' + postData.author?.anonymous_name}</span>
+              <span>·</span>
+              <span>{new Date(postData.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</span>
+            </div>
+            <p className="text-base text-gray-800 leading-relaxed whitespace-pre-wrap">{postData.content}</p>
+            {postData.image_url && (
+              <img src={postData.image_url} alt={postData.title} className="w-full mt-4 border border-gray-200 object-cover max-h-96" />
+            )}
+            {postData.tags?.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-4">
+                {postData.tags.map((pt: any) => (
+                  <span key={pt.tag?.name} className="bg-gray-100 rounded-full px-3 py-1 text-xs text-gray-600">{pt.tag?.name}</span>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
       {/* Actions */}
       <div className="flex gap-5 mb-6 items-center text-xs font-medium text-gray-400">
         <button onClick={() => handleVote(1)} className="flex items-center gap-1.5 hover:text-[#5B9CF5] transition-colors">
@@ -91,9 +160,9 @@ export function PostContent({ postId, initialComments, voteCount, commentCount, 
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           {t('post.save')}
         </button>
-        {profile && profile.id === postAuthorId && (
+        {isAuthor && (
           <button onClick={async () => {
-            if (!confirm('Delete?')  ) return;
+            if (!confirm('Delete?')) return;
             await deletePost(postId, profile.id);
             router.push('/');
           }} className="flex items-center gap-1.5 hover:text-red-500 transition-colors">

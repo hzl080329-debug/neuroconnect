@@ -247,6 +247,13 @@ export async function deleteComment(commentId: string, authorId: string) {
   return !error;
 }
 
+export async function editPost(postId: string, authorId: string, data: { title?: string; content?: string }) {
+  const { data: result, error } = await supabase.from('posts')
+    .update({ ...data, updated_at: new Date().toISOString() })
+    .eq('id', postId).eq('author_id', authorId).select().single();
+  return result || null;
+}
+
 export async function deletePost(postId: string, authorId: string) {
   const { error } = await supabase.from('posts')
     .delete().eq('id', postId).eq('author_id', authorId);
