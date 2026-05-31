@@ -104,7 +104,7 @@ export default function HomePage() {
                       {p.board?.name_zh}
                     </span>
                     <span>/</span>
-                    <span>{p.is_anonymous ? 'Anon' : post.author?.anonymous_name}</span>
+                    <span>{p.is_anonymous ? 'Anon' : p.author?.anonymous_name}</span>
                   </div>
                   <h3 className="font-bold text-[#111] mb-2 leading-snug group-hover:text-[#5B9CF5] transition-colors text-base lg:text-lg">
                     {p.title}
@@ -137,8 +137,8 @@ export default function HomePage() {
               </h3>
               <p className="text-xs text-gray-400 line-clamp-2">{p.content}</p>
               <div className="flex items-center gap-3 mt-3 text-[10px] text-gray-300">
-                <span>{p.is_anonymous ? 'Anon' : post.author?.anonymous_name}</span>
-                <span>{new Date(post.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</span>
+                <span>{p.is_anonymous ? 'Anon' : p.author?.anonymous_name}</span>
+                <span>{new Date(p.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</span>
               </div>
             </Link>
           ))}
