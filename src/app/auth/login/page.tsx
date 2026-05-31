@@ -5,11 +5,10 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 
 export default function LoginPage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const { signIn } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');

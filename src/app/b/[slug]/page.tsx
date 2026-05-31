@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { getPosts } from '@/lib/data';
 import { supabase } from '@/lib/supabase';
 import { BoardActions } from '@/components/board-actions';
@@ -14,13 +13,13 @@ const NAMES: Record<string, string> = {
 };
 
 export default function BoardPage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const params = useParams();
   const slug = params.slug as string;
   const [posts, setPosts] = useState<any[]>([]);
   const [boardId, setBoardId] = useState('');
   const [loading, setLoading] = useState(true);
-  const locale = i18n.language === 'en' ? 'en-US' : 'zh-CN';
+  const locale = lang === 'en' ? 'en-US' : 'zh-CN';
 
   useEffect(() => {
     Promise.all([

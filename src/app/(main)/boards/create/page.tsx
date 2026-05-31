@@ -2,8 +2,7 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 
 export default function CreateBoardPage() {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const { profile } = useAuth();
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);

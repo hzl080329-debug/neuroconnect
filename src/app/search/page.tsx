@@ -2,13 +2,12 @@
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { searchPosts } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 
 function SearchContent() {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const params = useSearchParams();
   const [query, setQuery] = useState(params.get('q') || '');
   const [results, setResults] = useState<any[]>([]);

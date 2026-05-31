@@ -1,8 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
 import { createMedicalRecord } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -34,8 +33,8 @@ const REGIONS: { name: string; slug: string }[] = [
 const RATINGS = [1, 2, 3, 4, 5];
 
 export default function SubmitExperiencePage() {
-  const { t } = useTranslation();
-  const DEPTS: string[] = t('experience.departments', { returnObjects: true }) as unknown as string[] || ['精神科', '心理科', '神经内科', '儿科', '其他'];
+  const { t } = useI18n();
+  const DEPTS: string[] = t('experience.departments') as string[] || ['精神科', '心理科', '神经内科', '儿科', '其他'];
   const { profile } = useAuth();
   const router = useRouter();
   const [region, setRegion] = useState('');

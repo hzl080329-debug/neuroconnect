@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getBoards, getPosts } from '@/lib/data';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 
 const SYMBOLS: Record<string, string> = {
   adhd: '◈', audhd: '◉', autism: '•', anxiety: '○',
@@ -11,7 +10,7 @@ const SYMBOLS: Record<string, string> = {
 };
 
 export default function HomePage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const [boards, setBoards] = useState<any[]>([]);
   const [hotPosts, setHotPosts] = useState<any[]>([]);
   const [latestPosts, setLatestPosts] = useState<any[]>([]);
@@ -52,7 +51,7 @@ export default function HomePage() {
             <Link key={b.id} href={b.slug === 'experience' ? '/experience' : `/b/${b.slug}`}
               className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 text-sm text-gray-700 font-bold hover:border-[#5B9CF5] hover:text-[#5B9CF5] hover:bg-[#5B9CF5]/5 transition-colors">
               <span className="text-[#5B9CF5]">{SYMBOLS[b.slug] || '●'}</span>
-              {b.icon} {i18n.language === 'en' ? (b.name_en || b.name_zh) : b.name_zh}
+              {b.icon} {lang === 'en' ? (b.name_en || b.name_zh) : b.name_zh}
             </Link>
           ))}
         </div>
@@ -61,7 +60,7 @@ export default function HomePage() {
       {/* Hot */}
       <section className="mb-8">
         <h2 className="text-xs tracking-[0.15em] text-gray-400 mb-3 font-bold">{t('home.hot')}</h2>
-        {hotPosts.length > 0 ? hotPosts.map((p: any) => <PostCard key={p.id} post={p} lang={i18n.language} />) : (
+        {hotPosts.length > 0 ? hotPosts.map((p: any) => <PostCard key={p.id} post={p} lang={lang} />) : (
           <div className="border border-gray-200 p-8 text-center text-sm text-gray-300">{t('home.emptyHot')}</div>
         )}
       </section>
@@ -69,7 +68,7 @@ export default function HomePage() {
       {/* Latest */}
       <section>
         <h2 className="text-xs tracking-[0.15em] text-gray-400 mb-3 font-bold">{t('home.latest')}</h2>
-        {latestPosts.length > 0 ? latestPosts.map((p: any) => <PostCard key={p.id} post={p} lang={i18n.language} />) : (
+        {latestPosts.length > 0 ? latestPosts.map((p: any) => <PostCard key={p.id} post={p} lang={lang} />) : (
           <div className="border border-gray-200 p-8 text-center text-sm text-gray-300">{t('home.emptyLatest')}</div>
         )}
       </section>

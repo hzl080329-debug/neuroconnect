@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
 import { getQAQuestions, createQAQuestion, getQAAnswers, createQAAnswer } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 
 export default function QAPage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const { profile } = useAuth();
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,7 +112,7 @@ export default function QAPage() {
               <p className="text-sm text-gray-500 mt-1 line-clamp-2">{q.content}</p>
               <div className="flex gap-4 mt-2 text-xs text-gray-400">
                 <span>{q.answer_count || 0} {t('qa.answer')}</span>
-                <span>{new Date(q.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</span>
+                <span>{new Date(q.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</span>
               </div>
             </button>
 

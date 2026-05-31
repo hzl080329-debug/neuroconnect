@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { getMedicalRecord } from '@/lib/data';
 
 const REGION_NAMES: Record<string, string> = {
@@ -20,12 +19,12 @@ const REGION_NAMES: Record<string, string> = {
 };
 
 export default function ExperienceDetailPage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const params = useParams();
   const id = params.id as string;
   const [record, setRecord] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const locale = i18n.language === 'en' ? 'en-US' : 'zh-CN';
+  const locale = lang === 'en' ? 'en-US' : 'zh-CN';
 
   useEffect(() => {
     getMedicalRecord(id).then((r) => {

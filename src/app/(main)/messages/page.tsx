@@ -1,13 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
 import { getConversations } from '@/lib/data';
 
 export default function MessagesPage() {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const { profile } = useAuth();
   const [conversations, setConversations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

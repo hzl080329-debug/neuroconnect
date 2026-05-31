@@ -10,13 +10,12 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 
 const COLORS = ['#5B9CF5', '#7AB8F5', '#4ADE80', '#F59E0B', '#EC4899', '#5B9CF5', '#F97316'];
 
 export default function SubmitPage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const fileRef = useRef<HTMLInputElement>(null);
   const { profile } = useAuth();
   const router = useRouter();

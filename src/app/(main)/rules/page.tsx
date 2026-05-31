@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 
 const RULES = [
   { title: '尊重与包容', content: '请尊重每个人的经历和感受，不评判、不攻击、不歧视。' },
@@ -13,7 +12,7 @@ const RULES = [
 ];
 
 export default function RulesPage() {
-  const { t } = useTranslation();
+  const { t } = useI18n();
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">

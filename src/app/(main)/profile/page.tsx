@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
 import { getUserPosts, updateProfile } from '@/lib/data';
 import { supabase } from '@/lib/supabase';
@@ -14,7 +13,7 @@ import { toast } from 'sonner';
 const AVATARS = ['◈','•','○','▴','▾','★','♦','□','●','◦','◉','⊕'];
 
 export default function ProfilePage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const { user, profile, loading, signOut, refreshProfile } = useAuth();
   const [posts, setPosts] = useState<any[]>([]);
   const [savedPosts, setSavedPosts] = useState<any[]>([]);
@@ -130,7 +129,7 @@ export default function ProfilePage() {
             </h1>
             <p className="text-sm text-gray-400 mt-1">{profile.karma || 0} {t('profile.karma')}</p>
             {profile.bio && <p className="text-xs text-gray-500 mt-3">{profile.bio}</p>}
-            <p className="text-xs text-gray-400 mt-3">{t('profile.joined')} {new Date(profile.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</p>
+            <p className="text-xs text-gray-400 mt-3">{t('profile.joined')} {new Date(profile.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</p>
             <Button onClick={() => setEditing(true)} variant="outline" className="mt-4 border-gray-300 text-xs font-bold">
               {t('profile.edit')}
             </Button>

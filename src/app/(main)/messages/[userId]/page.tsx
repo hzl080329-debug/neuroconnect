@@ -1,15 +1,14 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
 import { getMessages, sendMessage as sendMsg } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 export default function ChatPage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const { userId } = useParams<{ userId: string }>();
   const { profile } = useAuth();
   const router = useRouter();
@@ -69,7 +68,7 @@ export default function ChatPage() {
                 }`}>
                   <p className="text-sm">{m.content}</p>
                   <p className={`text-xs mt-1 ${isMine ? 'text-white/70' : 'text-gray-400'}`}>
-                    {new Date(m.created_at).toLocaleTimeString(i18n.language === 'en' ? 'en-US' : 'zh-CN', { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(m.created_at).toLocaleTimeString(lang === 'en' ? 'en-US' : 'zh-CN', { hour: '2-digit', minute: '2-digit' })}
                     {m.read_at && isMine ? ` ✓${t('messages.read')}` : ''}
                   </p>
                 </div>

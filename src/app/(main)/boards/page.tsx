@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { getBoards } from '@/lib/data';
 
 const COLORS: Record<string, string> = {
@@ -11,7 +10,7 @@ const COLORS: Record<string, string> = {
 };
 
 export default function BoardsListPage() {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const [allBoards, setAllBoards] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

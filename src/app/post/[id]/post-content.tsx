@@ -3,11 +3,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { createComment, votePost, toggleSavePost, submitReport, editComment, deleteComment, deletePost, getCommentsSorted } from '@/lib/data';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 
 function CommentItem({ comment, profile, onUpdate }: { comment: any; profile: any; onUpdate: () => void }) {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(comment.content);
   const isAuthor = profile && comment.author_id === profile.id;
@@ -19,7 +18,7 @@ function CommentItem({ comment, profile, onUpdate }: { comment: any; profile: an
     <div className="mb-4 pb-4 border-b border-gray-100">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-sm text-gray-600 font-medium">{comment.is_anonymous ? t('post.anonymousUser') : comment.author?.anonymous_name}</span>
-        <span className="text-xs text-gray-400">{new Date(comment.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</span>
+        <span className="text-xs text-gray-400">{new Date(comment.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</span>
         {isAuthor && (
           <div className="ml-auto flex gap-2 text-xs">
             <button onClick={() => setEditing(!editing)} className="text-gray-400 hover:text-[#5B9CF5]">{t('post.edit')}</button>
@@ -45,7 +44,7 @@ import { toast } from 'sonner';
 export function PostContent({ postId, initialComments, voteCount, commentCount, postAuthorId }: {
   postId: string; initialComments: any[]; voteCount: number; commentCount: number; postAuthorId: string;
 }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useI18n();
   const { profile } = useAuth();
   const [comments, setComments] = useState(initialComments);
   const [text, setText] = useState('');

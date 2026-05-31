@@ -1,12 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
 import { joinBoard, leaveBoard, isMember } from '@/lib/data';
 
 export function BoardActions({ boardId }: { boardId: string }) {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const { profile } = useAuth();
   const [joined, setJoined] = useState(false);
   const [loading, setLoading] = useState(true);

@@ -3,15 +3,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { toast } from 'sonner';
 
 const AFDIAN_URL = 'https://ifdian.net/a/moebiushewanzuoyou';
 
 export default function PremiumPage() {
   const { profile, user, refreshProfile } = useAuth();
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const email = user?.email;
   const [verifying, setVerifying] = useState(false);
   const [activating, setActivating] = useState(false);
@@ -62,7 +61,7 @@ export default function PremiumPage() {
           <p className="text-[#5B9CF5] font-bold text-sm">♦ {t('premium.active')}</p>
           {profile.premium_until && (
             <p className="text-xs text-gray-400 mt-1">
-              {t('premium.expires')} {new Date(profile.premium_until).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}
+              {t('premium.expires')} {new Date(profile.premium_until).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}
             </p>
           )}
         </div>

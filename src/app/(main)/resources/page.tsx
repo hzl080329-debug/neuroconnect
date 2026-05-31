@@ -1,12 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { getResources } from '@/lib/data';
 
 export default function ResourcesPage() {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const [resources, setResources] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

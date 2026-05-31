@@ -1,13 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 
 export default function SavedPage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const { profile } = useAuth();
   const [tab, setTab] = useState<'saved' | 'voted'>('saved');
   const [posts, setPosts] = useState<any[]>([]);
@@ -65,7 +64,7 @@ export default function SavedPage() {
               <span className="font-bold text-[#5B9CF5]">{p.board?.name_zh}</span>
               <span className="text-gray-300">|</span>
               <span className="text-gray-400">{p.is_anonymous ? '匿名' : p.author?.anonymous_name}</span>
-              <span className="ml-auto text-gray-300">{new Date(p.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</span>
+              <span className="ml-auto text-gray-300">{new Date(p.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</span>
             </div>
             <h3 className="text-sm font-bold text-[#111] mb-1">{p.title}</h3>
             <p className="text-xs text-gray-500 line-clamp-2">{p.content}</p>

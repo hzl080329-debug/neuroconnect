@@ -1,13 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
 import { getNotifications, markNotificationsRead } from '@/lib/data';
 
 export default function NotificationsPage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const { profile } = useAuth();
   const [notifs, setNotifs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +34,7 @@ export default function NotificationsPage() {
             {!n.read_at && <span className="w-2 h-2 bg-[#5B9CF5] rounded-full" />}
           </div>
           <p className="text-sm text-gray-600">{n.body_zh}</p>
-          <p className="text-[10px] text-gray-400 mt-2">{new Date(n.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</p>
+          <p className="text-[10px] text-gray-400 mt-2">{new Date(n.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</p>
         </Link>
       )) : (
         <p className="text-gray-300 text-center py-16 text-sm">{t('notifications.noNotifications')}</p>

@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
 import { getReports, handleReport } from '@/lib/data';
 import { supabase } from '@/lib/supabase';
@@ -10,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 export default function AdminPage() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const { profile } = useAuth();
   const [reports, setReports] = useState<any[]>([]);
   const [premReqs, setPremReqs] = useState<any[]>([]);
@@ -67,7 +66,7 @@ export default function AdminPage() {
           <div key={r.id} className="border border-gray-200 p-4 mb-3">
             <div className="flex items-center justify-between mb-2">
               <span className="font-bold text-sm">{r.username}</span>
-              <span className="text-xs text-gray-400">{new Date(r.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</span>
+              <span className="text-xs text-gray-400">{new Date(r.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</span>
             </div>
             {r.contact && <p className="text-xs text-gray-500 mb-3">Contact: {r.contact}</p>}
             <div className="flex gap-2">
@@ -89,7 +88,7 @@ export default function AdminPage() {
           <div key={r.id} className="border border-gray-200 p-4 mb-3">
             <div className="flex items-center gap-2 mb-2">
               <span className="bg-red-50 text-red-500 text-xs px-2 py-0.5 font-bold">{r.target_type === 'post' ? 'Post' : 'Comment'}</span>
-              <span className="text-xs text-gray-400">{new Date(r.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN')}</span>
+              <span className="text-xs text-gray-400">{new Date(r.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</span>
             </div>
             <p className="text-sm text-gray-600 mb-3">Reason: {r.reason}</p>
             <div className="flex gap-2">

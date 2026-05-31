@@ -2,8 +2,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
+import { useI18n } from '@/lib/i18n-provider';
 import { getMedicalRecords, getRegionCounts } from '@/lib/data';
 import { ChinaMapWrapper } from '@/components/china-map-wrapper';
 
@@ -24,7 +23,7 @@ function getRegionName(t: any, slug: string): string {
 }
 
 function ExperienceContent() {
-  const { t, i18n } = useTranslation();
+  const { t, lang, changeLang } = useI18n();
   const searchParams = useSearchParams();
   const region = searchParams.get('region');
 
@@ -43,7 +42,7 @@ function ExperienceContent() {
     });
   }, [region]);
 
-  const locale = i18n.language === 'en' ? 'en-US' : 'zh-CN';
+  const locale = lang === 'en' ? 'en-US' : 'zh-CN';
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
