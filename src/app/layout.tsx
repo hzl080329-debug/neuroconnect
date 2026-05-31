@@ -6,6 +6,7 @@ import { AppBody } from '@/components/app-body';
 import { AmbientBg } from '@/components/ambient-bg';
 import { Toaster } from 'sonner';
 import { I18nProvider } from '@/lib/i18n-provider';
+import { DarkModeProvider } from '@/lib/dark-mode-context';
 
 export const metadata: Metadata = {
   title: 'NeuroConnect - 神经多样性互助社区',
@@ -14,19 +15,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="zh">
-      <body className="min-h-screen antialiased bg-[#FAFAFA]">
-        <I18nProvider>
-          <AuthProvider>
-            <ThemeProvider>
-              <AppBody>
-                <AmbientBg />
-                {children}
-              </AppBody>
-              <Toaster position="top-center" />
-            </ThemeProvider>
-          </AuthProvider>
-        </I18nProvider>
+    <html lang="zh" suppressHydrationWarning>
+      <body className="min-h-screen antialiased bg-[#FAFAFA] dark:bg-[#111] dark:text-gray-200">
+        <DarkModeProvider>
+          <I18nProvider>
+            <AuthProvider>
+              <ThemeProvider>
+                <AppBody>
+                  <AmbientBg />
+                  {children}
+                </AppBody>
+                <Toaster position="top-center" />
+              </ThemeProvider>
+            </AuthProvider>
+          </I18nProvider>
+        </DarkModeProvider>
       </body>
     </html>
   );

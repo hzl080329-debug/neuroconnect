@@ -395,6 +395,57 @@ export async function getResources() {
   return data || [];
 }
 
+// User profiles by slug
+export async function getProfileBySlug(slug: string) {
+  const { data } = await supabase.from('profiles').select('*').eq('slug', slug).single();
+  return data;
+}
+
+export async function getUserPostsBySlug(slug: string) {
+  const { data: profile } = await supabase.from('profiles').select('id').eq('slug', slug).single();
+  if (!profile) return [];
+  const { data } = await supabase.from('posts').select('*, board:boards(name_zh, name_en)')
+    .eq('author_id', profile.id).eq('is_hidden', false)
+    .order('created_at', { ascending: false }).limit(30);
+  return data || [];
+}
+
+// Follow users
+export async function followUser(followerProfileId: string, followingProfileId: string) {
+  const { error } = await supabase.from('user_follows').insert({ follower_id: followerProfileId, following_id: followingProfileId });
+  return !error;
+}
+
+export async function unfollowUser(followerProfileId: string, followingProfileId: string) {
+  const { error } = await supabase.from('user_follows').delete().eq('follower_id', followerProfileId).eq('following_id', followingProfileId);
+  return !error;
+}
+
+export async function isFollowing(followerProfileId: string, followingProfileId: string): Promise<boolean> {
+  const { data } = await supabase.from('user_follows').select('id').eq('follower_id', followerProfileId).eq('following_id', followingProfileId).single();
+  return !!data;
+}
+
+export async function getFollowingPosts(userProfileId: string) {
+  const { data: follows } = await supabase.from('user_follows').select('following_id').eq('follower_id', userProfileId);
+  if (!follows?.length) return [];
+  const ids = follows.map(f => f.following_id);
+  const { data } = await supabase.from('posts').select('*, author:profiles!posts_author_id_fkey(anonymous_name, slug), board:boards(name_zh, name_en)')
+    .in('author_id', ids).eq('is_hidden', false)
+    .order('created_at', { ascending: false }).limit(20);
+  return data || [];
+}
+
+export async function getFollowerCount(profileId: string): Promise<number> {
+  const { count } = await supabase.from('user_follows').select('*', { count: 'exact', head: true }).eq('following_id', profileId);
+  return count || 0;
+}
+
+export async function getFollowingCount(profileId: string): Promise<number> {
+  const { count } = await supabase.from('user_follows').select('*', { count: 'exact', head: true }).eq('follower_id', profileId);
+  return count || 0;
+}
+
 // Admin
 export async function getReports() {
   const { data } = await supabase.from('reports').select('*')
