@@ -30,8 +30,8 @@ export default function LoginPage() {
     <div className="max-w-md mx-auto px-6 py-16">
       <div className="text-center mb-10">
         <div className="text-5xl mb-4">♦</div>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">欢迎回来</h1>
-        <p className="text-gray-500">登录你的匿名账号</p>
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('auth.welcomeBack')}</h1>
+        <p className="text-gray-500">{t('auth.loginSubtitle')}</p>
       </div>
       {error && <div className="bg-rose-50 border border-rose-200  p-4 mb-4 text-rose-600 text-sm text-center">{error}</div>}
       <div className="mb-4">
@@ -40,7 +40,7 @@ export default function LoginPage() {
       </div>
       <div className="mb-6">
         <label className="text-sm font-medium text-gray-700 mb-2 block">{t('auth.password')}</label>
-        <Input type="password" placeholder="输入密码" value={password} onChange={e => setPassword(e.target.value)} />
+        <Input type="password" placeholder={t('auth.enterPassword')} value={password} onChange={e => setPassword(e.target.value)} />
       </div>
       <Button onClick={handleLogin} disabled={loading} className="w-full  py-6" style={{ backgroundColor: '#5B9CF5' }}>
         {loading ? t('common.loading') : t('auth.login')}

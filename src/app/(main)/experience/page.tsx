@@ -19,6 +19,10 @@ const REGION_NAMES: Record<string, string> = {
   hongkong: '香港', macau: '澳门', taiwan: '台湾',
 };
 
+function getRegionName(t: any, slug: string): string {
+  return t('experience.regions.' + slug, REGION_NAMES[slug] || slug);
+}
+
 function ExperienceContent() {
   const { t, i18n } = useTranslation();
   const searchParams = useSearchParams();
@@ -48,7 +52,7 @@ function ExperienceContent() {
         <h1 className="text-2xl font-bold text-gray-800">{t('experience.title')}</h1>
         {region && region !== 'all' && (
           <span className="bg-[#5B9CF5]/10 text-[#3D7AD6] rounded-full px-3 py-1 text-sm font-medium">
-            📍 {REGION_NAMES[region] || region}
+            📍 {getRegionName(t, region)}
           </span>
         )}
       </div>
@@ -59,10 +63,10 @@ function ExperienceContent() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-800">
             {region && region !== 'all'
-              ? `${REGION_NAMES[region] || region} 的就诊经历`
-              : '最新就诊经历'}
+              ? getRegionName(t, region) + t('experience.recordsIn')
+              : t('experience.latestRecords')}
           </h2>
-          <span className="text-sm text-gray-400">共 {records.length} 篇</span>
+          <span className="text-sm text-gray-400">{t('experience.recordCount', { count: records.length })}</span>
         </div>
 
         {loading ? (
@@ -75,7 +79,7 @@ function ExperienceContent() {
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   {r.region && (
                     <span className="bg-blue-50 text-blue-600 rounded-full px-2 py-0.5 text-xs font-medium">
-                      📍 {REGION_NAMES[r.region] || r.region}
+                      📍 {getRegionName(t, r.region)}
                     </span>
                   )}
                   {r.hospital_name && (
@@ -98,9 +102,11 @@ function ExperienceContent() {
           <div className="text-center py-16">
             <div className="text-5xl mb-4">▸</div>
             <p className="text-gray-500 mb-2">
-              {region && region !== 'all' ? `${REGION_NAMES[region] || region} 还没有就诊经历` : '还没有就诊经历'}
+              {region && region !== 'all'
+                ? getRegionName(t, region) + t('experience.noRegionRecords')
+                : t('experience.noRegionRecords')}
             </p>
-            <p className="text-gray-400 text-sm mb-6">成为第一个分享的人吧</p>
+            <p className="text-gray-400 text-sm mb-6">{t('experience.firstToShare')}</p>
             <Link href="/experience/submit" className="inline-block bg-[#5B9CF5] text-white rounded-full px-6 py-3 font-semibold">
               {t('experience.share')}
             </Link>

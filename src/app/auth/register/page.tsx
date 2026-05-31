@@ -29,8 +29,8 @@ export default function RegisterPage() {
 
   const handleRegister = async () => {
     if (!email || !password) { setError(t('auth.loginError')); return; }
-    if (password.length < 6) { setError('密码至少6个字符'); return; }
-    if (!name.trim()) { setError('请设置匿名昵称'); return; }
+    if (password.length < 6) { setError(t('auth.passwordMinError')); return; }
+    if (!name.trim()) { setError(t('auth.nicknameRequired')); return; }
     setLoading(true); setError('');
     const { error: err } = await signUp(email, password);
     if (err) setError(err);
@@ -42,12 +42,12 @@ export default function RegisterPage() {
     <div className="max-w-md mx-auto px-6 py-8">
       <div className="text-center mb-8">
         <div className="text-4xl mb-3">♦</div>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">创建匿名账号</h1>
-        <p className="text-gray-500 text-sm">设置你的匿名身份</p>
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('auth.createAccount')}</h1>
+        <p className="text-gray-500 text-sm">{t('auth.setupProfile')}</p>
       </div>
       {error && <div className="bg-rose-50 border border-rose-200  p-4 mb-4 text-rose-600 text-sm text-center">{error}</div>}
 
-      <label className="text-sm font-medium text-gray-700 mb-2 block">选择头像</label>
+      <label className="text-sm font-medium text-gray-700 mb-2 block">{t('auth.chooseAvatar')}</label>
       <div className="flex flex-wrap gap-2 justify-center mb-6">
         {AVATARS.map(a => (
           <button key={a} onClick={() => setAvatar(a)}
@@ -57,15 +57,15 @@ export default function RegisterPage() {
       </div>
 
       <label className="text-sm font-medium text-gray-700 mb-2 block">{t('auth.nickname')}</label>
-      <Input placeholder="起一个喜欢的昵称" value={name} onChange={e => setName(e.target.value)} maxLength={20} className="mb-2" />
-      <p className="text-xs text-gray-400 mb-4 ml-1">社区中展示的名称（2-20字符）</p>
+      <Input placeholder={t('auth.chooseNickname')} value={name} onChange={e => setName(e.target.value)} maxLength={20} className="mb-2" />
+      <p className="text-xs text-gray-400 mb-4 ml-1">{t('auth.nicknameHint')}</p>
 
       <label className="text-sm font-medium text-gray-700 mb-2 block">{t('auth.email')}</label>
       <Input type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} className="mb-2" />
-      <p className="text-xs text-gray-400 mb-4 ml-1">仅用于登录，不公开</p>
+      <p className="text-xs text-gray-400 mb-4 ml-1">{t('auth.emailHint')}</p>
 
       <label className="text-sm font-medium text-gray-700 mb-2 block">{t('auth.password')}</label>
-      <Input type="password" placeholder="至少6个字符" value={password} onChange={e => setPassword(e.target.value)} className="mb-8" />
+      <Input type="password" placeholder={t('auth.passwordMinLen')} value={password} onChange={e => setPassword(e.target.value)} className="mb-8" />
 
       <Button onClick={handleRegister} disabled={loading} className="w-full  py-6 mb-4" style={{ backgroundColor: '#5B9CF5' }}>
         {loading ? t('common.loading') : t('auth.register')}

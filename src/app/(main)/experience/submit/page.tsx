@@ -31,11 +31,11 @@ const REGIONS: { name: string; slug: string }[] = [
   { name: '澳门', slug: 'macau' }, { name: '台湾', slug: 'taiwan' },
 ];
 
-const DEPARTMENTS = ['精神科', '心理科', '神经内科', '儿科', '其他'];
 const RATINGS = [1, 2, 3, 4, 5];
 
 export default function SubmitExperiencePage() {
   const { t } = useTranslation();
+  const DEPTS: string[] = t('experience.departments', { returnObjects: true }) as unknown as string[] || ['精神科', '心理科', '神经内科', '儿科', '其他'];
   const { profile } = useAuth();
   const router = useRouter();
   const [region, setRegion] = useState('');
@@ -82,7 +82,7 @@ export default function SubmitExperiencePage() {
       </div>
 
       <div className="text-xs text-gray-400 mb-6 ml-1">
-        💡 所有就诊信息仅用于经验参考，匿名身份会被保护
+        💡 {t('experience.noticeHint')}
       </div>
 
       {/* Region */}
@@ -90,7 +90,7 @@ export default function SubmitExperiencePage() {
       <select value={region} onChange={e => setRegion(e.target.value)}
         className="w-full bg-white  px-4 py-3 border border-gray-200 mb-2 text-gray-800">
         <option value="">{t('experience.all')}</option>
-        {REGIONS.map(r => <option key={r.slug} value={r.slug}>{r.name}</option>)}
+        {REGIONS.map(r => <option key={r.slug} value={r.slug}>{t('experience.regions.' + r.slug, r.name)}</option>)}
       </select>
 
       <label className="text-sm font-medium text-gray-600 mb-2 block mt-4">{t('experience.city')}</label>
@@ -105,7 +105,7 @@ export default function SubmitExperiencePage() {
         <div>
           <label className="text-sm font-medium text-gray-600 mb-2 block">{t('experience.department')}</label>
           <div className="flex flex-wrap gap-2">
-            {DEPARTMENTS.map(d => (
+            {DEPTS.map(d => (
               <button key={d} onClick={() => setDepartment(d === department ? '' : d)}
                 className={`rounded-full px-3 py-1.5 text-xs border ${department === d ? 'border-[#5B9CF5] bg-[#5B9CF5]/10 text-[#3D7AD6] font-semibold' : 'border-gray-200 text-gray-500'}`}
               >{d}</button>
