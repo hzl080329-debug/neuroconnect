@@ -128,3 +128,51 @@
     @apply font-sans;
   }
 }
+
+/* Dark mode global overrides */
+.dark .bg-white { background-color: #1a1a1a; }
+.dark .bg-gray-50 { background-color: #1f1f1f; }
+.dark .bg-gray-100 { background-color: #222; }
+.dark .bg-blue-50 { background-color: #1a2233; }
+.dark .bg-red-50 { background-color: #2a1515; }
+.dark .bg-\[\#FFFAF5\] { background-color: #1a1a1a; }
+
+.dark .text-gray-800 { color: #e0e0e0; }
+.dark .text-gray-700 { color: #ccc; }
+.dark .text-gray-600 { color: #aaa; }
+.dark .text-gray-500 { color: #999; }
+.dark .text-gray-400 { color: #777; }
+.dark .text-gray-300 { color: #666; }
+.dark .text-\[\#111\] { color: #e0e0e0; }
+
+.dark .border-gray-200 { border-color: #333; }
+.dark .border-gray-100 { border-color: #2a2a2a; }
+.dark .border-gray-300 { border-color: #444; }
+.dark .border-gray-50 { border-color: #2a2a2a; }
+.dark .border-t-gray-100 { border-top-color: #2a2a2a; }
+.dark .border-b-gray-100 { border-bottom-color: #2a2a2a; }
+.dark .border-b-gray-50 { border-bottom-color: #2a2a2a; }
+.dark .border-blue-100 { border-color: #223355; }
+
+.dark .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+.dark .hover\:bg-gray-50:hover { background-color: #1f1f1f; }
+.dark .hover\:border-gray-300:hover { border-color: #555; }
+.dark .hover\:text-gray-700:hover { color: #ccc; }
+.dark .hover\:text-gray-600:hover { color: #aaa; }
+
+.dark .text-gray-200 { color: #e0e0e0; }
+.dark .dark\:bg-\[\#1a1a1a\] { background-color: #1a1a1a; }
+.dark .dark\:bg-\[\#111\] { background-color: #111; }
+.dark .dark\:text-gray-200 { color: #e0e0e0; }
+.dark .dark\:text-gray-100 { color: #f0f0f0; }
+.dark .dark\:text-gray-400 { color: #999; }
+.dark .dark\:border-gray-800 { border-color: #2a2a2a; }
+.dark .dark\:border-gray-700 { border-color: #444; }
+.dark .dark\:border-gray-600 { border-color: #555; }
+
+/* Keep the blue accent visible in dark mode */
+.dark .text-\[\#5B9CF5\] { color: #7AB8FF; }
+.dark .text-\[\#3D7AD6\] { color: #5B9CF5; }
+.dark .bg-\[\#5B9CF5\]\/10 { background-color: rgba(91,156,245,0.15); }
+.dark .bg-\[\#5B9CF5\]\/5 { background-color: rgba(91,156,245,0.08); }
+.dark .border-\[\#5B9CF5\] { border-color: #5B9CF5; }
