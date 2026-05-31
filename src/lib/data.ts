@@ -63,13 +63,21 @@ export async function getComments(postId: string) {
 }
 
 export async function createComment(c: {
-  postId: string; authorId: string; content: string; isAnonymous: boolean;
+  postId: string; authorId: string; content: string; isAnonymous: boolean; parentId?: string;
 }) {
   const { data } = await supabase.from('comments').insert({
     post_id: c.postId, author_id: c.authorId, content: c.content,
-    is_anonymous: c.isAnonymous,
+    is_anonymous: c.isAnonymous, parent_id: c.parentId || null,
   }).select().single();
   return data;
+}
+
+export async function getCommentReplies(parentId: string) {
+  const { data } = await supabase.from('comments').select(
+    '*, author:profiles!comments_author_id_fkey(anonymous_name, avatar_url)'
+  ).eq('parent_id', parentId).eq('is_hidden', false)
+   .order('created_at', { ascending: true });
+  return data || [];
 }
 
 export async function votePost(postId: string, userId: string, value: number) {

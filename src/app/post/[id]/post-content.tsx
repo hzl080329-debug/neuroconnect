@@ -2,41 +2,97 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { createComment, votePost, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentsSorted } from '@/lib/data';
+import { createComment, votePost, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentReplies } from '@/lib/data';
 import { useI18n } from '@/lib/i18n-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 
-function CommentItem({ comment, profile, onUpdate }: { comment: any; profile: any; onUpdate: () => void }) {
+function CommentItem({ comment, profile, onUpdate, depth = 0 }: { comment: any; profile: any; onUpdate: () => void; depth?: number }) {
   const { t, lang } = useI18n();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(comment.content);
+  const [replying, setReplying] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [replies, setReplies] = useState<any[]>([]);
+  const [showReplies, setShowReplies] = useState(false);
+  const [loadingReplies, setLoadingReplies] = useState(false);
   const isAuthor = profile && comment.author_id === profile.id;
 
   const handleEdit = async () => { await editComment(comment.id, profile.id, text); setEditing(false); onUpdate(); };
   const handleDelete = async () => { if (confirm('Delete?')) { await deleteComment(comment.id, profile.id); onUpdate(); } };
 
+  const handleReply = async () => {
+    if (!profile || !replyText.trim()) return;
+    const c = await createComment({ postId: comment.post_id, authorId: profile.id, content: replyText.trim(), isAnonymous: true, parentId: comment.id });
+    if (c) {
+      setReplies(prev => [...prev, { ...c, author: { anonymous_name: '我', avatar_url: null } }]);
+      setReplyText('');
+      setReplying(false);
+      setShowReplies(true);
+      onUpdate();
+    }
+  };
+
+  const loadReplies = async () => {
+    if (showReplies) { setShowReplies(false); return; }
+    setLoadingReplies(true);
+    const r = await getCommentReplies(comment.id);
+    setReplies(r);
+    setShowReplies(true);
+    setLoadingReplies(false);
+  };
+
   return (
-    <div className="mb-4 pb-4 border-b border-gray-100">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm text-gray-600 font-medium">{comment.is_anonymous ? t('post.anonymousUser') : comment.author?.anonymous_name}</span>
-        <span className="text-xs text-gray-400">{new Date(comment.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</span>
-        {isAuthor && (
-          <div className="ml-auto flex gap-2 text-xs">
-            <button onClick={() => setEditing(!editing)} className="text-gray-400 hover:text-[#5B9CF5]">{t('post.edit')}</button>
-            <button onClick={handleDelete} className="text-gray-400 hover:text-red-400">{t('post.delete')}</button>
+    <div className={`${depth > 0 ? 'ml-6 pl-3 border-l-2 border-gray-100' : ''}`}>
+      <div className="mb-3 pb-3 border-b border-gray-50">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-sm text-gray-600 font-medium">{comment.is_anonymous ? t('post.anonymousUser') : comment.author?.anonymous_name}</span>
+          <span className="text-xs text-gray-400">{new Date(comment.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</span>
+        </div>
+        {editing ? (
+          <div className="flex gap-2">
+            <Input value={text} onChange={e => setText(e.target.value)} className="flex-1 text-sm" />
+            <Button size="sm" onClick={handleEdit} className="text-xs bg-[#5B9CF5]">{t('common.save')}</Button>
+            <Button size="sm" onClick={() => setEditing(false)} variant="outline" className="text-xs">{t('common.cancel')}</Button>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-800 mb-2">{comment.content}</p>
+        )}
+        <div className="flex gap-3 text-xs text-gray-400">
+          {profile && (
+            <button onClick={() => setReplying(!replying)} className="hover:text-[#5B9CF5]">{t('post.reply')}</button>
+          )}
+          {isAuthor && (
+            <>
+              <button onClick={() => setEditing(!editing)} className="hover:text-[#5B9CF5]">{t('post.edit')}</button>
+              <button onClick={handleDelete} className="hover:text-red-400">{t('post.delete')}</button>
+            </>
+          )}
+          {depth === 0 && (
+            <button onClick={loadReplies} className="hover:text-[#5B9CF5]">
+              {loadingReplies ? '...' : showReplies ? '收起回复' : `${t('post.reply')}${(comment as any)._replyCount ? ` (${(comment as any)._replyCount})` : ''}`}
+            </button>
+          )}
+        </div>
+
+        {/* Reply input */}
+        {replying && (
+          <div className="flex gap-2 mt-2">
+            <Input value={replyText} onChange={e => setReplyText(e.target.value)} placeholder={t('post.reply') + '...'} className="flex-1 text-sm" />
+            <Button size="sm" onClick={handleReply} className="text-xs bg-[#5B9CF5]">{t('post.reply')}</Button>
           </div>
         )}
       </div>
-      {editing ? (
-        <div className="flex gap-2">
-          <Input value={text} onChange={e => setText(e.target.value)} className="flex-1 text-sm" />
-          <Button size="sm" onClick={handleEdit} className="text-xs bg-[#5B9CF5]">{t('common.save')}</Button>
+
+      {/* Nested replies */}
+      {showReplies && replies.length > 0 && (
+        <div className="mb-2">
+          {replies.map((r: any) => (
+            <CommentItem key={r.id} comment={r} profile={profile} onUpdate={onUpdate} depth={depth + 1} />
+          ))}
         </div>
-      ) : (
-        <p className="text-sm text-gray-800">{comment.content}</p>
       )}
     </div>
   );
