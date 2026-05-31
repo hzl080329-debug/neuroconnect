@@ -127,7 +127,8 @@ export default function ProfilePage() {
               {profile.anonymous_name}
               {profile.is_premium && <span className="text-[#5B9CF5] text-xs">♦</span>}
             </h1>
-            <p className="text-sm text-gray-400 mt-1">{profile.karma || 0} {t('profile.karma')}</p>
+            <p className="text-sm text-gray-400 mt-1">@{profile.slug || 'user-xxx'}</p>
+            <p className="text-sm text-gray-400">{profile.karma || 0} {t('profile.karma')}</p>
             {profile.bio && <p className="text-xs text-gray-500 mt-3">{profile.bio}</p>}
             <p className="text-xs text-gray-400 mt-3">{t('profile.joined')} {new Date(profile.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}</p>
             <Button onClick={() => setEditing(true)} variant="outline" className="mt-4 border-gray-300 text-xs font-bold">
