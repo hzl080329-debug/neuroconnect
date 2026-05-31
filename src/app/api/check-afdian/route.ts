@@ -25,17 +25,17 @@ async function queryAfdianOrders(page = 1): Promise<any[]> {
   return json.data?.list || [];
 }
 
-// Verify payment by matching the user's NeuroConnect username in the order remark
+// Verify payment by matching the user's email in the order remark
 export async function POST(req: NextRequest) {
   try {
-    const { neuroconnectUsername } = await req.json();
+    const { email } = await req.json();
 
     if (!AFDIAN_USER_ID || !AFDIAN_TOKEN) {
       return NextResponse.json({ ok: false, error: '爱发电 API 未配置' }, { status: 500 });
     }
 
-    if (!neuroconnectUsername) {
-      return NextResponse.json({ ok: false, error: '缺少用户名' }, { status: 400 });
+    if (!email) {
+      return NextResponse.json({ ok: false, error: '缺少邮箱' }, { status: 400 });
     }
 
     // Query recent orders (up to 200)
@@ -46,18 +46,18 @@ export async function POST(req: NextRequest) {
       if (orders.length < 50) break;
     }
 
-    // Match by remark containing the NeuroConnect username, status=2 (paid), amount >= 9.8
+    // Match by remark containing the user's email, status=2 (paid), amount >= 9.8
     const match = allOrders.find((o: any) =>
       o.status === 2 &&
       parseFloat(o.total_amount) >= 9.8 &&
       o.remark &&
-      o.remark.includes(neuroconnectUsername)
+      o.remark.includes(email)
     );
 
     if (!match) {
       return NextResponse.json({
         ok: false,
-        error: `未找到匹配的赞助记录。请确认：\n1. 已支付并支付成功\n2. 备注中填写了你的 NeuroConnect 用户名「${neuroconnectUsername}」`,
+        error: `未找到匹配的赞助记录。请确认：\n1. 已支付并支付成功\n2. 备注中填写了你的注册邮箱「${email}」`,
       });
     }
 
