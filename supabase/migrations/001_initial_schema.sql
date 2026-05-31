@@ -247,7 +247,7 @@ CREATE TRIGGER on_auth_user_created
 -- ============================================
 INSERT INTO boards (slug, name_zh, name_en, description_zh, description_en, icon, sort_order) VALUES
   ('adhd', 'ADHD', 'ADHD', '注意力缺陷多动障碍相关讨论', 'Discussions about ADHD', '🧠', 1),
-  ('autism', '自闭谱系', 'Autism Spectrum', '自闭症谱系相关讨论', 'Discussions about Autism Spectrum', '🌈', 2),
+  ('autism', '孤独谱系', 'Autism Spectrum', '孤独症谱系相关讨论', 'Discussions about Autism Spectrum', '🌈', 2),
   ('anxiety', '焦虑抑郁', 'Anxiety & Depression', '焦虑、抑郁等情绪障碍讨论', 'Anxiety, depression, and mood disorders', '💙', 3),
   ('experience', '就诊经历', 'Medical Visits', '医院就诊、诊断过程分享', 'Share medical visit experiences', '🏥', 4),
   ('life', '生活分享', 'Life Sharing', '日常生活、兴趣爱好分享', 'Daily life and hobbies', '🌿', 5),

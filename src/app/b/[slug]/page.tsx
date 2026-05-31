@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { BoardActions } from '@/components/board-actions';
 
 const NAMES: Record<string, string> = {
-  adhd: 'ADHD', audhd: 'AuDHD', autism: '自闭谱系', anxiety: '焦虑抑郁',
+  adhd: 'ADHD', audhd: 'AuDHD', autism: '孤独谱系', anxiety: '焦虑抑郁',
   experience: '就诊经历', life: '生活分享', work: '学习工作', support: '情绪支持',
 };
 
