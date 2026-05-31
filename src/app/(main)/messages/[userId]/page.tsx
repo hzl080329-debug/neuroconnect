@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
-import { getMessages, sendMessage as sendMsg } from '@/lib/data';
+import { getMessages, sendMessage as sendMsg, createNotification } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -35,6 +35,7 @@ export default function ChatPage() {
   const handleSend = async () => {
     if (!profile || !text.trim()) return;
     await sendMsg(profile.id, userId, text.trim());
+    await createNotification({ userId, type: 'message', titleZh: '你有一条新私信', titleEn: 'New message', bodyZh: text.trim().slice(0, 50), bodyEn: text.trim().slice(0, 50), link: `/messages/${profile.id}` });
     setText('');
     loadMessages();
   };

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { createComment, votePost, voteComment, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentReplies, blockUser } from '@/lib/data';
+import { createComment, votePost, voteComment, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentReplies, blockUser, createNotification } from '@/lib/data';
 import { useI18n } from '@/lib/i18n-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,6 +31,9 @@ function CommentItem({ comment, profile, onUpdate, depth = 0 }: { comment: any; 
       setReplyText('');
       setReplying(false);
       setShowReplies(true);
+      if (profile.id !== comment.author_id) {
+        createNotification({ userId: comment.author_id, type: 'reply', titleZh: '有人回复了你的评论', titleEn: 'Someone replied to your comment', bodyZh: replyText.trim().slice(0, 50), bodyEn: replyText.trim().slice(0, 50), link: `/post/${comment.post_id}` });
+      }
       onUpdate();
     }
   };
@@ -63,7 +66,13 @@ function CommentItem({ comment, profile, onUpdate, depth = 0 }: { comment: any; 
         <div className="flex gap-3 text-xs text-gray-400 items-center">
           {profile && (
             <>
-              <button onClick={async () => { await voteComment(comment.id, profile.id, 1); onUpdate(); }} className="hover:text-[#5B9CF5]">▲</button>
+              <button onClick={async () => {
+                await voteComment(comment.id, profile.id, 1);
+                if (profile.id !== comment.author_id) {
+                  createNotification({ userId: comment.author_id, type: 'vote', titleZh: '有人赞了你的评论', titleEn: 'Someone voted your comment', bodyZh: comment.content.slice(0, 50), bodyEn: comment.content.slice(0, 50), link: `/post/${comment.post_id}` });
+                }
+                onUpdate();
+              }} className="hover:text-[#5B9CF5]">▲</button>
               <span className="text-gray-500 font-bold">{comment.vote_count || 0}</span>
               <button onClick={async () => { await voteComment(comment.id, profile.id, -1); onUpdate(); }} className="hover:text-red-400">▼</button>
             </>
@@ -153,6 +162,9 @@ export function PostContent({ postId, initialPost, initialComments, voteCount, c
   const handleVote = async (value: 1 | -1) => {
     if (!profile) { toast.error('请先登录'); return; }
     await votePost(postId, profile.id, value);
+    if (profile.id !== postAuthorId) {
+      createNotification({ userId: postAuthorId, type: 'vote', titleZh: '有人赞了你的帖子', titleEn: 'Someone voted your post', bodyZh: initialPost.title, bodyEn: initialPost.title, link: `/post/${postId}` });
+    }
     router.refresh();
   };
 
@@ -164,6 +176,9 @@ export function PostContent({ postId, initialPost, initialComments, voteCount, c
     if (c) {
       setComments(prev => [...prev, { ...c, author: { anonymous_name: '我', avatar_url: null } }]);
       setText('');
+      if (profile.id !== postAuthorId) {
+        createNotification({ userId: postAuthorId, type: 'comment', titleZh: '有人评论了你的帖子', titleEn: 'Someone commented on your post', bodyZh: initialPost.title, bodyEn: initialPost.title, link: `/post/${postId}` });
+      }
       router.refresh();
     }
     setLoading(false);
