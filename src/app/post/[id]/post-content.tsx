@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { createComment, votePost, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentReplies } from '@/lib/data';
+import { createComment, votePost, voteComment, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentReplies } from '@/lib/data';
 import { useI18n } from '@/lib/i18n-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,7 +60,14 @@ function CommentItem({ comment, profile, onUpdate, depth = 0 }: { comment: any; 
         ) : (
           <p className="text-sm text-gray-800 mb-2">{comment.content}</p>
         )}
-        <div className="flex gap-3 text-xs text-gray-400">
+        <div className="flex gap-3 text-xs text-gray-400 items-center">
+          {profile && (
+            <>
+              <button onClick={async () => { await voteComment(comment.id, profile.id, 1); onUpdate(); }} className="hover:text-[#5B9CF5]">▲</button>
+              <span className="text-gray-500 font-bold">{comment.vote_count || 0}</span>
+              <button onClick={async () => { await voteComment(comment.id, profile.id, -1); onUpdate(); }} className="hover:text-red-400">▼</button>
+            </>
+          )}
           {profile && (
             <button onClick={() => setReplying(!replying)} className="hover:text-[#5B9CF5]">{t('post.reply')}</button>
           )}

@@ -80,6 +80,18 @@ export async function getCommentReplies(parentId: string) {
   return data || [];
 }
 
+export async function voteComment(commentId: string, userId: string, value: number) {
+  const { data: ex } = await supabase.from('comment_votes').select('*')
+    .eq('comment_id', commentId).eq('user_id', userId).single();
+  if (ex) {
+    if (ex.value === value) { await supabase.from('comment_votes').delete().eq('id', ex.id); return null; }
+    const { data } = await supabase.from('comment_votes').update({ value }).eq('id', ex.id).select().single();
+    return data;
+  }
+  const { data } = await supabase.from('comment_votes').insert({ comment_id: commentId, user_id: userId, value }).select().single();
+  return data;
+}
+
 export async function votePost(postId: string, userId: string, value: number) {
   const { data: ex } = await supabase.from('post_votes').select('*')
     .eq('post_id', postId).eq('user_id', userId).single();
