@@ -5,23 +5,68 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
-export default function PremiumPage() {
-  const { profile } = useAuth();
-  const [username, setUsername] = useState('');
-  const [txnId, setTxnId] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+const AFDIAN_SPONSOR_URL = 'https://afdian.com/a/moebius'; // TODO: replace with actual 爱发电 page
 
-  const handleActivate = async () => {
-    if (!username.trim()) { toast.error('请填写用户名'); return; }
-    setSubmitting(true);
-    const { data: prof } = await supabase.from('profiles').select('id').eq('anonymous_name', username.trim()).single();
-    if (!prof) { toast.error('用户名不存在，请先注册'); setSubmitting(false); return; }
-    await supabase.from('profiles').update({ is_premium: true, premium_until: new Date(Date.now() + 30*24*60*60*1000).toISOString() }).eq('anonymous_name', username.trim());
-    await supabase.from('premium_requests').insert({ username: username.trim(), contact: txnId.trim() || '微信支付', status: 'approved' });
-    toast.success('Premium 已激活！刷新后生效');
-    setSubmitted(true);
-    setSubmitting(false);
+export default function PremiumPage() {
+  const { profile, refreshProfile } = useAuth();
+  const [afdianId, setAfdianId] = useState(profile?.afdian_user_id || '');
+  const [verifying, setVerifying] = useState(false);
+  const [activating, setActivating] = useState(false);
+
+  // Save afdian ID
+  const handleSaveAfdianId = async () => {
+    if (!profile || !afdianId.trim()) return;
+    const { error } = await supabase.from('profiles')
+      .update({ afdian_user_id: afdianId.trim() })
+      .eq('user_id', profile.user_id);
+    if (error) { toast.error('保存失败'); return; }
+    await refreshProfile();
+    toast.success('爱发电 ID 已保存');
+  };
+
+  // Verify payment via API
+  const handleVerify = async () => {
+    if (!profile || !afdianId.trim()) {
+      toast.error('请先填写你的爱发电用户名');
+      return;
+    }
+    setVerifying(true);
+    try {
+      const res = await fetch('/api/check-afdian', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          afdianUserId: afdianId.trim(),
+          neuroconnectUserId: profile.user_id,
+        }),
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        toast.error(data.error);
+        return;
+      }
+      toast.success(`找到赞助记录：¥${data.order.total_amount}（${data.order.plan_title}）`);
+      // Auto-activate
+      setActivating(true);
+      const expiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      await supabase.from('profiles').update({
+        is_premium: true,
+        premium_until: expiry,
+        premium_order_id: data.order.out_trade_no,
+      }).eq('user_id', profile.user_id);
+      await supabase.from('premium_requests').insert({
+        username: profile.anonymous_name,
+        contact: `爱发电: ${afdianId.trim()} / 订单: ${data.order.out_trade_no}`,
+        status: 'approved',
+      });
+      await refreshProfile();
+      toast.success('🎉 Premium 已自动激活！');
+    } catch {
+      toast.error('验证失败，请稍后再试');
+    } finally {
+      setVerifying(false);
+      setActivating(false);
+    }
   };
 
   return (
@@ -31,6 +76,11 @@ export default function PremiumPage() {
       {profile?.is_premium && (
         <div className="border border-[#5B9CF5] bg-[#5B9CF5]/5 p-4 mb-8 text-center">
           <p className="text-[#5B9CF5] font-bold text-sm">♦ 你已是 Premium 会员</p>
+          {profile.premium_until && (
+            <p className="text-xs text-gray-400 mt-1">
+              有效期至 {new Date(profile.premium_until).toLocaleDateString('zh-CN')}
+            </p>
+          )}
         </div>
       )}
 
@@ -65,56 +115,60 @@ export default function PremiumPage() {
         </div>
       </div>
 
-      {/* Payment */}
+      {/* 爱发电 Payment */}
       <div className="border border-gray-200 p-6 mb-6">
-        <h2 className="text-sm font-black text-[#111] mb-4">微信扫码支付</h2>
-        <div className="flex flex-col items-center">
-          <div className="w-48 h-48 border border-gray-200 mb-3 flex items-center justify-center">
-            <img
-              src="/wx-qr.png"
-              alt="微信收款码"
-              className="w-full h-full object-contain"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-            />
-          </div>
-          <p className="text-xs text-gray-400 mb-1">¥9.9/月 · ¥68/年</p>
-          <p className="text-xs text-gray-400">扫码支付后填写下方表单激活</p>
+        <h2 className="text-sm font-black text-[#111] mb-4">♦ 爱发电赞助</h2>
+        <div className="flex flex-col items-center gap-4">
+          <a
+            href={AFDIAN_SPONSOR_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#FF6B9D] text-white px-8 py-3 font-bold text-sm rounded-full hover:opacity-90 transition"
+          >
+            ♥ 去爱发电赞助
+          </a>
+          <p className="text-xs text-gray-400">¥9.9/月 · ¥68/年，点击跳转爱发电完成支付后回来验证</p>
         </div>
       </div>
 
       {/* Activation */}
       <div className="border border-gray-200 p-6 mb-8">
-        <h2 className="text-sm font-black text-[#111] mb-4">支付后激活</h2>
-        {submitted ? (
-          <div className="text-center py-6">
-            <p className="text-[#5B9CF5] font-bold text-lg">♦</p>
-            <p className="text-[#5B9CF5] font-bold text-sm mt-2">Premium 已激活</p>
-            <p className="text-xs text-gray-400 mt-1">刷新页面后生效，有效期 30 天</p>
+        <h2 className="text-sm font-black text-[#111] mb-4">♦ 自动验证激活</h2>
+        <div className="space-y-3 max-w-sm mx-auto">
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">你的爱发电用户名 (User ID)</label>
+            <div className="flex gap-2">
+              <input
+                placeholder="爱发电用户名"
+                value={afdianId}
+                onChange={e => setAfdianId(e.target.value)}
+                className="flex-1 border border-gray-300 p-3 text-sm"
+              />
+              <button
+                onClick={handleSaveAfdianId}
+                className="px-4 py-3 border border-gray-300 text-xs text-gray-600 hover:bg-gray-50"
+              >
+                保存
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">可在爱发电 App → 我的 → 右上角查看</p>
           </div>
-        ) : (
-          <div className="space-y-3 max-w-sm mx-auto">
-            <input
-              placeholder="你的 NeuroConnect 用户名"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              className="w-full border border-gray-300 p-3 text-sm text-center"
-            />
-            <input
-              placeholder="微信转账单号（可选，方便核对）"
-              value={txnId}
-              onChange={e => setTxnId(e.target.value)}
-              className="w-full border border-gray-300 p-3 text-xs text-center text-gray-400"
-            />
-            <button
-              onClick={handleActivate}
-              disabled={submitting}
-              className="w-full py-3 bg-[#5B9CF5] text-white text-sm font-bold hover:bg-[#4A8AE8] disabled:opacity-50"
-            >
-              {submitting ? '激活中...' : '激活 Premium'}
-            </button>
-            <p className="text-xs text-gray-400 text-center">确认已支付后点击激活，即时开通</p>
+
+          <div className="bg-gray-50 border border-gray-200 p-3 text-xs text-gray-500 leading-relaxed">
+            <p className="font-bold mb-1">操作步骤：</p>
+            <p>1. 填写爱发电用户名并「保存」</p>
+            <p>2. 点击上方「去爱发电赞助」完成支付</p>
+            <p>3. 回到此页面点击「验证支付」自动激活</p>
           </div>
-        )}
+
+          <button
+            onClick={handleVerify}
+            disabled={verifying || activating || !afdianId.trim()}
+            className="w-full py-3 bg-[#5B9CF5] text-white text-sm font-bold hover:bg-[#4A8AE8] disabled:opacity-50"
+          >
+            {activating ? '激活中...' : verifying ? '验证中...' : '验证支付并激活'}
+          </button>
+        </div>
       </div>
     </div>
   );

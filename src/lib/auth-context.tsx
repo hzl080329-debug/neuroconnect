@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabase';
 import type { Session, User } from '@supabase/supabase-js';
 
-interface Profile { id: string; user_id: string; anonymous_name: string; avatar_url: string | null; bio: string | null; is_admin: boolean; is_premium: boolean; karma: number; created_at: string; updated_at?: string; premium_until?: string | null; }
+interface Profile { id: string; user_id: string; anonymous_name: string; avatar_url: string | null; bio: string | null; is_admin: boolean; is_premium: boolean; karma: number; created_at: string; updated_at?: string; premium_until?: string | null; afdian_user_id?: string | null; }
 interface AuthCtx {
   session: Session | null; user: User | null; profile: Profile | null; loading: boolean;
   signUp: (email: string, password: string) => Promise<{ error: string | null }>;
