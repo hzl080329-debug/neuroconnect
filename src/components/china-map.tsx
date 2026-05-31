@@ -5,10 +5,11 @@ import { PROVINCES } from './china-provinces';
 
 export function ChinaMap({ regionCounts }: { regionCounts: Record<string, number> }) {
   const [hovered, setHovered] = useState<string | null>(null);
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; name: string; count: number } | null>(null);
   const total = Object.values(regionCounts).reduce((a, b) => a + b, 0);
 
   return (
-    <div className="relative w-full max-w-[700px] mx-auto bg-white  border shadow-sm p-3">
+    <div className="relative w-full max-w-[700px] mx-auto bg-white border shadow-sm p-3">
       {/* Top bar */}
       <div className="flex items-center justify-center gap-3 mb-2">
         <Link href="/experience?region=all"
@@ -40,43 +41,32 @@ export function ChinaMap({ regionCounts }: { regionCounts: Record<string, number
               ? '#5EEAD4'
               : '#D1D5DB';
           return (
-            <g key={prov.slug}>
-              <path
-                d={prov.path}
-                fill={fillColor}
-                stroke={strokeColor}
-                strokeWidth={isHovered ? 2 : 0.8}
-                strokeLinejoin="round"
-                className="cursor-pointer transition-all duration-150"
-                style={{ filter: isHovered ? 'drop-shadow(0 3px 6px rgba(0,0,0,0.2))' : undefined }}
-                onMouseEnter={() => setHovered(prov.slug)}
-                onMouseLeave={() => setHovered(null)}
-                onClick={() => {
-                  if (typeof window !== 'undefined') {
-                    window.location.href = `/experience?region=${prov.slug}`;
-                  }
-                }}
-              />
-            </g>
-          );
-        })}
-
-{/* Province labels */}
-        {PROVINCES.map((prov) => {
-          const count = regionCounts[prov.slug] || 0;
-          return (
-            <text
+            <path
               key={prov.slug}
-              x={prov.cx}
-              y={prov.cy}
-              textAnchor="middle"
-              fill={count > 0 ? '#0F766E' : '#6B7280'}
-              fontSize={prov.name.length <= 2 ? 11 : 10}
-              fontWeight={count > 0 ? 700 : 500}
-              className="pointer-events-none select-none"
-            >
-              {prov.name}
-            </text>
+              d={prov.path}
+              fill={fillColor}
+              stroke={strokeColor}
+              strokeWidth={isHovered ? 2 : 0.8}
+              strokeLinejoin="round"
+              className="cursor-pointer transition-all duration-150"
+              style={{ filter: isHovered ? 'drop-shadow(0 3px 6px rgba(0,0,0,0.2))' : undefined }}
+              onMouseEnter={(e) => {
+                setHovered(prov.slug);
+                setTooltip({ x: e.clientX, y: e.clientY, name: prov.name, count });
+              }}
+              onMouseMove={(e) => {
+                setTooltip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null);
+              }}
+              onMouseLeave={() => {
+                setHovered(null);
+                setTooltip(null);
+              }}
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.location.href = `/experience?region=${prov.slug}`;
+                }
+              }}
+            />
           );
         })}
 
@@ -103,7 +93,23 @@ export function ChinaMap({ regionCounts }: { regionCounts: Record<string, number
         </g>
       </svg>
 
-{/* Legend */}
+      {/* Tooltip */}
+      {tooltip && (
+        <div
+          className="fixed z-50 pointer-events-none bg-[#111] text-white text-xs font-bold px-3 py-1.5 rounded shadow-lg"
+          style={{
+            left: tooltip.x + 12,
+            top: tooltip.y - 32,
+          }}
+        >
+          {tooltip.name}
+          {tooltip.count > 0 && (
+            <span className="ml-1 text-[#5EEAD4]">{tooltip.count}</span>
+          )}
+        </div>
+      )}
+
+      {/* Legend */}
       <div className="flex items-center justify-center gap-6 mt-2 text-xs text-gray-500">
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-sm bg-[#99F6E4] border border-[#5EEAD4]" /> 有就诊经历
