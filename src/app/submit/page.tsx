@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { getBoards, createPost } from '@/lib/data';
+import { getBoards, createPost, getBlockedWords, filterBlockedWords } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -49,8 +49,17 @@ export default function SubmitPage() {
     if (!profile) { toast.error('请先登录'); router.push('/auth/login'); return; }
     if (!boardId || !title || !content) { toast.error('请填写完整'); return; }
     setLoading(true);
+
+    // Filter blocked words
+    const blockedWords = await getBlockedWords();
+    const titleResult = filterBlockedWords(title, blockedWords);
+    const contentResult = filterBlockedWords(content, blockedWords);
+    if (titleResult.hasBlocked || contentResult.hasBlocked) {
+      toast.error('内容包含违规词汇，已自动替换为***');
+    }
+
     const tagList = tags.split(',').map(t => t.trim()).filter(Boolean);
-    const result = await createPost({ authorId: profile.id, boardId, title, content, isAnonymous, tags: tagList, imageUrl });
+    const result = await createPost({ authorId: profile.id, boardId, title: titleResult.filtered, content: contentResult.filtered, isAnonymous, tags: tagList, imageUrl });
     setLoading(false);
     if (result) {
       toast.success('发布成功！');

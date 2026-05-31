@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useI18n } from '@/lib/i18n-provider';
 import { useAuth } from '@/lib/auth-context';
-import { getReports, handleReport } from '@/lib/data';
+import { getReports, handleReport, getBlockedWords, addBlockedWord, removeBlockedWord } from '@/lib/data';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -13,16 +13,20 @@ export default function AdminPage() {
   const { profile } = useAuth();
   const [reports, setReports] = useState<any[]>([]);
   const [premReqs, setPremReqs] = useState<any[]>([]);
+  const [blockedWords, setBlockedWords] = useState<string[]>([]);
+  const [newWord, setNewWord] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (profile?.is_admin) {
       Promise.all([
         getReports(),
-        supabase.from('premium_requests').select('*').eq('status', 'pending').order('created_at', { ascending: false })
-      ]).then(([r, { data: p }]) => {
+        supabase.from('premium_requests').select('*').eq('status', 'pending').order('created_at', { ascending: false }),
+        getBlockedWords()
+      ]).then(([r, { data: p }, bw]) => {
         setReports(r);
         setPremReqs(p || []);
+        setBlockedWords(bw);
         setLoading(false);
       });
     } else setLoading(false);
@@ -98,6 +102,56 @@ export default function AdminPage() {
           </div>
         )) : (
           <p className="text-xs text-gray-400 py-4">{t('admin.noReports')}</p>
+        )}
+      </section>
+
+      {/* Blocked Words */}
+      <section className="mb-10">
+        <h2 className="text-sm font-black text-[#111] mb-4">🚫 屏蔽词管理</h2>
+        <div className="flex gap-2 mb-4">
+          <input
+            value={newWord}
+            onChange={e => setNewWord(e.target.value)}
+            placeholder="添加屏蔽词..."
+            className="flex-1 border border-gray-300 p-2 text-sm"
+            onKeyDown={async e => {
+              if (e.key === 'Enter' && newWord.trim()) {
+                await addBlockedWord(newWord.trim());
+                setBlockedWords(prev => [...prev, newWord.trim()]);
+                setNewWord('');
+              }
+            }}
+          />
+          <button
+            onClick={async () => {
+              if (!newWord.trim()) return;
+              await addBlockedWord(newWord.trim());
+              setBlockedWords(prev => [...prev, newWord.trim()]);
+              setNewWord('');
+            }}
+            className="px-4 py-2 bg-[#5B9CF5] text-white text-sm font-bold"
+          >
+            + 添加
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {blockedWords.map(w => (
+            <span key={w} className="inline-flex items-center gap-1 bg-red-50 text-red-500 text-xs px-3 py-1 rounded-full border border-red-100">
+              {w}
+              <button
+                onClick={async () => {
+                  await removeBlockedWord(w);
+                  setBlockedWords(prev => prev.filter(x => x !== w));
+                }}
+                className="text-red-400 hover:text-red-600 ml-1"
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+        {blockedWords.length === 0 && (
+          <p className="text-xs text-gray-400 py-4">暂无屏蔽词</p>
         )}
       </section>
     </div>

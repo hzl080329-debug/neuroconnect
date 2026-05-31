@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { createComment, votePost, voteComment, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentReplies, blockUser, createNotification } from '@/lib/data';
+import { createComment, votePost, voteComment, toggleSavePost, submitReport, editComment, deleteComment, editPost, deletePost, getCommentReplies, blockUser, createNotification, getBlockedWords, filterBlockedWords } from '@/lib/data';
 import { useI18n } from '@/lib/i18n-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +25,9 @@ function CommentItem({ comment, profile, onUpdate, depth = 0 }: { comment: any; 
 
   const handleReply = async () => {
     if (!profile || !replyText.trim()) return;
-    const c = await createComment({ postId: comment.post_id, authorId: profile.id, content: replyText.trim(), isAnonymous: true, parentId: comment.id });
+    const blockedWords = await getBlockedWords();
+    const { filtered } = filterBlockedWords(replyText.trim(), blockedWords);
+    const c = await createComment({ postId: comment.post_id, authorId: profile.id, content: filtered, isAnonymous: true, parentId: comment.id });
     if (c) {
       setReplies(prev => [...prev, { ...c, author: { anonymous_name: '我', avatar_url: null } }]);
       setReplyText('');
@@ -172,7 +174,9 @@ export function PostContent({ postId, initialPost, initialComments, voteCount, c
     if (!profile) { toast.error('请先登录'); return; }
     if (!text.trim()) return;
     setLoading(true);
-    const c = await createComment({ postId, authorId: profile.id, content: text.trim(), isAnonymous: true });
+    const blockedWords = await getBlockedWords();
+    const { filtered } = filterBlockedWords(text.trim(), blockedWords);
+    const c = await createComment({ postId, authorId: profile.id, content: filtered, isAnonymous: true });
     if (c) {
       setComments(prev => [...prev, { ...c, author: { anonymous_name: '我', avatar_url: null } }]);
       setText('');

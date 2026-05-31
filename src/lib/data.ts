@@ -352,6 +352,42 @@ export async function getCommentsSorted(postId: string, sort: 'new' | 'top' = 'n
   return data || [];
 }
 
+// Blocked words
+let _blockedWordsCache: string[] | null = null;
+let _cacheTime = 0;
+
+export async function getBlockedWords(): Promise<string[]> {
+  if (_blockedWordsCache && Date.now() - _cacheTime < 60000) return _blockedWordsCache;
+  const { data } = await supabase.from('blocked_words').select('word');
+  _blockedWordsCache = (data || []).map((r: any) => r.word);
+  _cacheTime = Date.now();
+  return _blockedWordsCache || [];
+}
+
+export function filterBlockedWords(text: string, blockedWords: string[]): { filtered: string; hasBlocked: boolean } {
+  let filtered = text;
+  let hasBlocked = false;
+  for (const word of blockedWords) {
+    if (filtered.includes(word)) {
+      filtered = filtered.replaceAll(word, '***');
+      hasBlocked = true;
+    }
+  }
+  return { filtered, hasBlocked };
+}
+
+export async function addBlockedWord(word: string): Promise<boolean> {
+  const { error } = await supabase.from('blocked_words').insert({ word: word.trim() });
+  if (!error) { _blockedWordsCache = null; return true; }
+  return false;
+}
+
+export async function removeBlockedWord(word: string): Promise<boolean> {
+  const { error } = await supabase.from('blocked_words').delete().eq('word', word);
+  if (!error) { _blockedWordsCache = null; return true; }
+  return false;
+}
+
 // Resources
 export async function getResources() {
   const { data } = await supabase.from('resources').select('*')
