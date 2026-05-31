@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import zh from '@/messages/zh.json';
 import en from '@/messages/en.json';
 
@@ -19,6 +19,13 @@ const I18nContext = createContext<I18nCtx>({
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState('zh');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('nc-lang') || 'zh';
+    if (saved !== lang) setLang(saved);
+    setMounted(true);
+  }, []);
 
   const t = useCallback((key: string, fallback?: any): any => {
     const keys = key.split('.');
@@ -27,9 +34,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       if (!val || typeof val !== 'object') return fallback !== undefined ? fallback : key;
       val = val[k];
     }
-    // If it's an array, return it directly (for departments etc)
     if (Array.isArray(val)) return val;
-    // If it's a string with interpolation
     if (typeof val === 'string' && fallback && typeof fallback === 'object' && !Array.isArray(fallback)) {
       let result = val;
       for (const [k, v] of Object.entries(fallback)) {
@@ -42,6 +47,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, [lang]);
 
   const changeLang = useCallback((code: string) => {
+    localStorage.setItem('nc-lang', code);
     setLang(code);
   }, []);
 
