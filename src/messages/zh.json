@@ -1,85 +1,193 @@
 {
-  "app": {
-    "name": "神经多样性互助社区",
-    "subtitle": "Neurodiversity Support Community"
-  },
-  "tabs": {
+  "nav": {
     "home": "首页",
+    "profile": "个人中心",
+    "notifications": "通知",
+    "messages": "私信",
+    "experience": "就诊地图",
     "boards": "板块",
     "qa": "问答",
     "resources": "资源",
-    "profile": "我的"
+    "premium": "会员",
+    "settings": "设置",
+    "admin": "管理",
+    "signOut": "退出",
+    "signIn": "登录"
   },
   "home": {
-    "searchPlaceholder": "搜索帖子、话题...",
-    "hotPosts": "热门帖子",
-    "latestPosts": "最新讨论",
-    "boards": "社区板块",
-    "emptyHot": "还没有帖子，成为第一个分享的人吧！",
-    "emptyLatest": "社区刚刚开始，快来发布第一个帖子！"
+    "hero": "NEURO / CONNECT",
+    "subtitle": "神经多样性互助社区",
+    "search": "搜索帖子、话题...",
+    "hot": "热门",
+    "latest": "最新",
+    "rules": "社区规则",
+    "post": "发布帖子",
+    "contact": "联系我们",
+    "contactText": "欢迎加入我们的社区，分享你的故事与经历",
+    "wx": "微信",
+    "wxId": "Moebius河湾左右",
+    "email": "邮箱",
+    "xiaohongshu": "小红书",
+    "instagram": "Instagram"
+  },
+  "settings": {
+    "title": "设置",
+    "language": "语言",
+    "bgColor": "背景颜色",
+    "back": "返回"
+  },
+  "profile": {
+    "posts": "帖子",
+    "saved": "收藏",
+    "liked": "赞过",
+    "edit": "编辑资料",
+    "nickname": "匿名昵称",
+    "bio": "简介",
+    "save": "保存",
+    "logout": "退出登录",
+    "joined": "加入时间",
+    "karma": "积分"
+  },
+  "premium": {
+    "title": "PREMIUM",
+    "subtitle": "支持社区，解锁更多功能",
+    "free": "免费",
+    "recommend": "推荐",
+    "monthly": "/月",
+    "yearly": "/年",
+    "benefits1": "全部免费功能",
+    "benefits2": "自定义头像上传",
+    "benefits3": "无限制私信",
+    "benefits4": "Premium 徽章",
+    "benefits5": "更多主题色",
+    "free1": "浏览板块",
+    "free2": "发帖 / 评论",
+    "free3": "点赞 / 收藏",
+    "free4": "就诊地图",
+    "free5": "基础私信",
+    "active": "你已是 Premium 会员",
+    "expires": "有效期至",
+    "howto": "爱发电赞助 · 自动验证",
+    "notice": "重要：支付时请填写备注",
+    "noticeText": "在爱发电支付页面的「备注」中填写你的注册邮箱：",
+    "noticeHint": "系统会根据邮箱自动匹配你的赞助记录",
+    "sponsor": "去爱发电赞助（¥9.9起）",
+    "verify": "我已完成支付，验证激活",
+    "verifying": "验证中...",
+    "activating": "激活中...",
+    "back": "返回"
   },
   "boards": {
-    "adhd": "ADHD",
-    "autism": "自闭谱系",
-    "anxiety": "焦虑抑郁",
-    "experience": "就诊经历",
-    "life": "生活分享",
-    "work": "学习工作",
-    "support": "情绪支持"
+    "title": "所有板块",
+    "official": "官方板块",
+    "user": "用户板块",
+    "create": "创建板块",
+    "join": "加入",
+    "joined": "已加入",
+    "leave": "离开"
   },
   "post": {
     "submit": "发布帖子",
     "title": "标题",
     "content": "正文",
-    "selectBoard": "选择板块",
+    "board": "选择板块",
     "tags": "标签",
     "anonymous": "匿名发布",
+    "image": "上传图片",
     "publish": "发布",
     "comment": "评论",
     "reply": "回复",
     "like": "点赞",
     "save": "收藏",
-    "report": "举报"
+    "report": "举报",
+    "delete": "删除",
+    "edit": "编辑",
+    "comments": "条评论",
+    "noComments": "暂无评论",
+    "writeComment": "写下你的评论...",
+    "anonymousUser": "匿名",
+    "new": "最新",
+    "top": "热门",
+    "back": "返回"
+  },
+  "experience": {
+    "title": "就诊地图",
+    "all": "全国",
+    "share": "分享经历",
+    "submit": "分享就诊经历",
+    "hospital": "医院名称",
+    "department": "科室",
+    "diagnosis": "诊断",
+    "medication": "用药",
+    "cost": "费用",
+    "rating": "评分",
+    "region": "地区",
+    "city": "城市",
+    "hasData": "有就诊经历",
+    "noData": "暂无",
+    "selected": "已选中",
+    "back": "返回"
+  },
+  "qa": {
+    "title": "问答区",
+    "ask": "提出问题",
+    "answer": "回答",
+    "noAnswers": "暂无回答",
+    "back": "返回"
+  },
+  "messages": {
+    "title": "私信",
+    "noMessages": "暂无消息",
+    "send": "发送",
+    "read": "已读",
+    "back": "返回"
+  },
+  "notifications": {
+    "title": "通知",
+    "noNotifications": "暂无通知",
+    "back": "返回"
+  },
+  "resources": {
+    "title": "资源中心",
+    "knowledge": "科普文章",
+    "guide": "就诊指南",
+    "hotline": "求助热线",
+    "support": "支持资源",
+    "back": "返回"
+  },
+  "search": {
+    "placeholder": "搜索帖子、话题...",
+    "search": "搜索",
+    "results": "个结果",
+    "noResults": "没有找到相关帖子",
+    "searching": "搜索中...",
+    "back": "返回"
   },
   "auth": {
     "login": "登录",
     "register": "注册",
     "email": "邮箱",
     "password": "密码",
-    "phone": "手机号",
-    "anonymousName": "匿名昵称",
-    "setupProfile": "设置你的匿名身份"
-  },
-  "qa": {
-    "title": "匿名问答区",
-    "askQuestion": "提出问题",
-    "answer": "回答"
-  },
-  "messages": {
-    "title": "私信",
-    "noMessages": "暂无消息"
-  },
-  "resources": {
-    "title": "资源中心",
-    "articles": "科普文章",
-    "guides": "就诊指南",
-    "hotlines": "求助热线",
-    "support": "支持资源"
-  },
-  "profile": {
-    "myPosts": "我的帖子",
-    "myComments": "我的评论",
-    "saved": "收藏",
-    "settings": "设置",
-    "logout": "退出登录"
-  },
-  "rules": {
-    "title": "社区规则"
+    "nickname": "匿名昵称",
+    "noAccount": "还没有账号？",
+    "hasAccount": "已有账号？",
+    "goRegister": "去注册",
+    "goLogin": "去登录",
+    "loginError": "登录失败",
+    "registerError": "注册失败"
   },
   "admin": {
     "title": "管理后台",
-    "reports": "举报管理",
-    "resources": "资源管理"
+    "premiumRequests": "Premium 激活请求",
+    "reports": "待处理举报",
+    "approve": "批准",
+    "reject": "拒绝",
+    "ignore": "忽略",
+    "delete": "删除",
+    "noAccess": "仅限管理员访问",
+    "noRequests": "暂无待处理的激活请求",
+    "noReports": "暂无待处理举报",
+    "back": "返回"
   },
   "common": {
     "save": "保存",
@@ -88,6 +196,7 @@
     "confirm": "确认",
     "loading": "加载中...",
     "error": "出错了",
-    "noData": "暂无内容"
+    "noData": "暂无内容",
+    "back": "返回"
   }
 }

@@ -1,85 +1,193 @@
 {
-  "app": {
-    "name": "Neurodiversity Community",
-    "subtitle": "Neurodiversity Support Community"
-  },
-  "tabs": {
+  "nav": {
     "home": "Home",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "messages": "Messages",
+    "experience": "Med Map",
     "boards": "Boards",
     "qa": "Q&A",
     "resources": "Resources",
-    "profile": "Profile"
+    "premium": "Premium",
+    "settings": "Settings",
+    "admin": "Admin",
+    "signOut": "Sign Out",
+    "signIn": "Sign In"
   },
   "home": {
-    "searchPlaceholder": "Search posts, topics...",
-    "hotPosts": "Hot Posts",
-    "latestPosts": "Latest",
-    "boards": "Community Boards",
-    "emptyHot": "No posts yet. Be the first to share!",
-    "emptyLatest": "The community is just getting started!"
+    "hero": "NEURO / CONNECT",
+    "subtitle": "Neurodiversity Support Community",
+    "search": "Search posts, topics...",
+    "hot": "Hot",
+    "latest": "Latest",
+    "rules": "Community Rules",
+    "post": "Post",
+    "contact": "Contact Us",
+    "contactText": "Join our community and share your stories",
+    "wx": "WeChat",
+    "wxId": "Moebius River",
+    "email": "Email",
+    "xiaohongshu": "RED",
+    "instagram": "Instagram"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "bgColor": "Background Color",
+    "back": "Back"
+  },
+  "profile": {
+    "posts": "Posts",
+    "saved": "Saved",
+    "liked": "Liked",
+    "edit": "Edit Profile",
+    "nickname": "Nickname",
+    "bio": "Bio",
+    "save": "Save",
+    "logout": "Sign Out",
+    "joined": "Joined",
+    "karma": "Karma"
+  },
+  "premium": {
+    "title": "PREMIUM",
+    "subtitle": "Support the community, unlock more features",
+    "free": "Free",
+    "recommend": "Recommended",
+    "monthly": "/mo",
+    "yearly": "/yr",
+    "benefits1": "All free features",
+    "benefits2": "Custom avatar upload",
+    "benefits3": "Unlimited messages",
+    "benefits4": "Premium badge",
+    "benefits5": "More theme colors",
+    "free1": "Browse boards",
+    "free2": "Post / Comment",
+    "free3": "Vote / Save",
+    "free4": "Medical Map",
+    "free5": "Basic messages",
+    "active": "You are a Premium member",
+    "expires": "Expires",
+    "howto": "Sponsor via Afdian · Auto Verify",
+    "notice": "Important: Include your email in the remark",
+    "noticeText": "Enter your registered email in the remark field on Afdian:",
+    "noticeHint": "We'll match your sponsorship by email automatically",
+    "sponsor": "Sponsor on Afdian (from ¥9.9)",
+    "verify": "I've paid, verify now",
+    "verifying": "Verifying...",
+    "activating": "Activating...",
+    "back": "Back"
   },
   "boards": {
-    "adhd": "ADHD",
-    "autism": "Autism Spectrum",
-    "anxiety": "Anxiety & Depression",
-    "experience": "Medical Visits",
-    "life": "Life Sharing",
-    "work": "Study & Work",
-    "support": "Emotional Support"
+    "title": "All Boards",
+    "official": "Official",
+    "user": "Community",
+    "create": "Create Board",
+    "join": "Join",
+    "joined": "Joined",
+    "leave": "Leave"
   },
   "post": {
     "submit": "Create Post",
     "title": "Title",
     "content": "Content",
-    "selectBoard": "Select Board",
+    "board": "Select Board",
     "tags": "Tags",
     "anonymous": "Post Anonymously",
+    "image": "Upload Image",
     "publish": "Publish",
     "comment": "Comment",
     "reply": "Reply",
     "like": "Like",
     "save": "Save",
-    "report": "Report"
+    "report": "Report",
+    "delete": "Delete",
+    "edit": "Edit",
+    "comments": "comments",
+    "noComments": "No comments yet",
+    "writeComment": "Write a comment...",
+    "anonymousUser": "Anonymous",
+    "new": "New",
+    "top": "Top",
+    "back": "Back"
   },
-  "auth": {
-    "login": "Log In",
-    "register": "Sign Up",
-    "email": "Email",
-    "password": "Password",
-    "phone": "Phone Number",
-    "anonymousName": "Anonymous Name",
-    "setupProfile": "Set up your anonymous identity"
+  "experience": {
+    "title": "Medical Map",
+    "all": "All",
+    "share": "Share",
+    "submit": "Share Experience",
+    "hospital": "Hospital",
+    "department": "Department",
+    "diagnosis": "Diagnosis",
+    "medication": "Medication",
+    "cost": "Cost",
+    "rating": "Rating",
+    "region": "Region",
+    "city": "City",
+    "hasData": "Has records",
+    "noData": "None",
+    "selected": "Selected",
+    "back": "Back"
   },
   "qa": {
-    "title": "Anonymous Q&A",
-    "askQuestion": "Ask a Question",
-    "answer": "Answer"
+    "title": "Q&A",
+    "ask": "Ask a Question",
+    "answer": "Answer",
+    "noAnswers": "No answers yet",
+    "back": "Back"
   },
   "messages": {
     "title": "Messages",
-    "noMessages": "No messages yet"
+    "noMessages": "No messages yet",
+    "send": "Send",
+    "read": "Read",
+    "back": "Back"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "noNotifications": "No notifications yet",
+    "back": "Back"
   },
   "resources": {
     "title": "Resources",
-    "articles": "Articles",
-    "guides": "Guides",
-    "hotlines": "Hotlines",
-    "support": "Support"
+    "knowledge": "Articles",
+    "guide": "Guides",
+    "hotline": "Hotlines",
+    "support": "Support",
+    "back": "Back"
   },
-  "profile": {
-    "myPosts": "My Posts",
-    "myComments": "My Comments",
-    "saved": "Saved",
-    "settings": "Settings",
-    "logout": "Log Out"
+  "search": {
+    "placeholder": "Search posts, topics...",
+    "search": "Search",
+    "results": "results",
+    "noResults": "No results found",
+    "searching": "Searching...",
+    "back": "Back"
   },
-  "rules": {
-    "title": "Community Rules"
+  "auth": {
+    "login": "Sign In",
+    "register": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "nickname": "Nickname",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "goRegister": "Sign Up",
+    "goLogin": "Sign In",
+    "loginError": "Login failed",
+    "registerError": "Registration failed"
   },
   "admin": {
     "title": "Admin Panel",
-    "reports": "Report Management",
-    "resources": "Resource Management"
+    "premiumRequests": "Premium Requests",
+    "reports": "Pending Reports",
+    "approve": "Approve",
+    "reject": "Reject",
+    "ignore": "Ignore",
+    "delete": "Delete",
+    "noAccess": "Admin only",
+    "noRequests": "No pending requests",
+    "noReports": "No pending reports",
+    "back": "Back"
   },
   "common": {
     "save": "Save",
@@ -87,7 +195,8 @@
     "delete": "Delete",
     "confirm": "Confirm",
     "loading": "Loading...",
-    "error": "Something went wrong",
-    "noData": "No content yet"
+    "error": "Error",
+    "noData": "No content yet",
+    "back": "Back"
   }
 }
