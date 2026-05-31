@@ -389,6 +389,21 @@ export async function removeBlockedWord(word: string): Promise<boolean> {
 }
 
 // Resources
+export async function createResource(r: {
+  category: string; titleZh: string; titleEn: string; contentZh: string; contentEn: string; url?: string;
+}) {
+  const { data } = await supabase.from('resources').insert({
+    category: r.category, title_zh: r.titleZh, title_en: r.titleEn,
+    content_zh: r.contentZh, content_en: r.contentEn, url: r.url || null, published: true,
+  }).select().single();
+  return data;
+}
+
+export async function deleteResource(id: string) {
+  const { error } = await supabase.from('resources').delete().eq('id', id);
+  return !error;
+}
+
 export async function getResources() {
   const { data } = await supabase.from('resources').select('*')
     .eq('published', true).order('created_at', { ascending: false });
