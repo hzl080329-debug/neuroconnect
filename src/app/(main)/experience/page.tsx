@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,7 @@ const REGION_NAMES: Record<string, string> = {
   hongkong: '香港', macau: '澳门', taiwan: '台湾',
 };
 
-export default function ExperiencePage() {
+function ExperienceContent() {
   const { t, i18n } = useTranslation();
   const searchParams = useSearchParams();
   const region = searchParams.get('region');
@@ -39,7 +39,6 @@ export default function ExperiencePage() {
     });
   }, [region]);
 
-  const total = Object.values(regionCounts).reduce((a, b) => a + b, 0);
   const locale = i18n.language === 'en' ? 'en-US' : 'zh-CN';
 
   return (
@@ -54,10 +53,8 @@ export default function ExperiencePage() {
         )}
       </div>
 
-      {/* Interactive Map */}
       <ChinaMapWrapper regionCounts={regionCounts} />
 
-      {/* Results list */}
       <div className="mt-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-800">
@@ -74,7 +71,7 @@ export default function ExperiencePage() {
           <>
             {records.map((r: any) => (
               <Link key={r.id} href={`/experience/${r.id}`}
-                className="block bg-white  p-4 mb-3 border shadow-sm hover:shadow-md transition-shadow">
+                className="block bg-white p-4 mb-3 border shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   {r.region && (
                     <span className="bg-blue-50 text-blue-600 rounded-full px-2 py-0.5 text-xs font-medium">
@@ -89,7 +86,7 @@ export default function ExperiencePage() {
                 <h3 className="font-semibold text-gray-800 mb-1">{r.title}</h3>
                 <p className="text-sm text-gray-500 line-clamp-2">{r.content}</p>
                 <div className="flex items-center gap-2 mt-2 text-xs text-gray-400">
-                  <span>{r.is_anonymous ? '• 匿名' : '👤 ' + (r.author?.anonymous_name || '')}</span>
+                  <span>{r.is_anonymous ? '• ' + t('post.anonymousUser') : '👤 ' + (r.author?.anonymous_name || '')}</span>
                   <span>·</span>
                   <span>{new Date(r.created_at).toLocaleDateString(locale)}</span>
                   {r.diagnosis && <><span>·</span><span>{r.diagnosis}</span></>}
@@ -111,5 +108,13 @@ export default function ExperiencePage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ExperiencePage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20 text-gray-400">Loading...</div>}>
+      <ExperienceContent />
+    </Suspense>
   );
 }
