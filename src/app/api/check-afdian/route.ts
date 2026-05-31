@@ -14,17 +14,10 @@ async function queryAfdianOrders(page = 1): Promise<any[]> {
   const ts = Math.floor(Date.now() / 1000);
   const sign = afdianSign(params, ts);
 
-  const body = JSON.stringify({
-    user_id: AFDIAN_USER_ID,
-    params,
-    ts,
-    sign,
-  });
-
   const res = await fetch('https://afdian.net/api/open/query-order', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body,
+    body: JSON.stringify({ user_id: AFDIAN_USER_ID, params, ts, sign }),
   });
 
   const json = await res.json();
@@ -32,35 +25,40 @@ async function queryAfdianOrders(page = 1): Promise<any[]> {
   return json.data?.list || [];
 }
 
+// Verify payment by matching the user's NeuroConnect username in the order remark
 export async function POST(req: NextRequest) {
   try {
-    const { afdianUserId, neuroconnectUserId } = await req.json();
+    const { neuroconnectUsername } = await req.json();
 
     if (!AFDIAN_USER_ID || !AFDIAN_TOKEN) {
       return NextResponse.json({ ok: false, error: '爱发电 API 未配置' }, { status: 500 });
     }
 
-    if (!afdianUserId || !neuroconnectUserId) {
-      return NextResponse.json({ ok: false, error: '缺少参数' }, { status: 400 });
+    if (!neuroconnectUsername) {
+      return NextResponse.json({ ok: false, error: '缺少用户名' }, { status: 400 });
     }
 
-    // Query recent orders (first 3 pages = up to 150 orders)
+    // Query recent orders (up to 200)
     const allOrders: any[] = [];
-    for (let page = 1; page <= 3; page++) {
+    for (let page = 1; page <= 4; page++) {
       const orders = await queryAfdianOrders(page);
       allOrders.push(...orders);
       if (orders.length < 50) break;
     }
 
-    // Find a matching order: 爱发电 user_id matches, status=2 (paid), amount >= 9.9
+    // Match by remark containing the NeuroConnect username, status=2 (paid), amount >= 9.8
     const match = allOrders.find((o: any) =>
-      o.user_id === afdianUserId &&
       o.status === 2 &&
-      parseFloat(o.total_amount) >= 9.8
+      parseFloat(o.total_amount) >= 9.8 &&
+      o.remark &&
+      o.remark.includes(neuroconnectUsername)
     );
 
     if (!match) {
-      return NextResponse.json({ ok: false, error: '未找到匹配的赞助记录，请确认已支付并在爱发电备注中填写你的用户名' });
+      return NextResponse.json({
+        ok: false,
+        error: `未找到匹配的赞助记录。请确认：\n1. 已支付并支付成功\n2. 备注中填写了你的 NeuroConnect 用户名「${neuroconnectUsername}」`,
+      });
     }
 
     return NextResponse.json({
@@ -68,7 +66,7 @@ export async function POST(req: NextRequest) {
       order: {
         out_trade_no: match.out_trade_no,
         total_amount: match.total_amount,
-        plan_title: match.title || '自定义金额',
+        plan_title: match.title || '赞助',
         created_at: match.create_time,
       },
     });
