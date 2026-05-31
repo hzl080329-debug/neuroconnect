@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
-const AFDIAN_SPONSOR_URL = 'https://afdian.com/a/moebius'; // TODO: replace with actual 爱发电 page
+const AFDIAN_SPONSOR_URL = 'https://ifdian.net/a/moebiushewanzuoyou';
 
 export default function PremiumPage() {
   const { profile, refreshProfile } = useAuth();
